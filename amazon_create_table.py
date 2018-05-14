@@ -4,13 +4,20 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-config = {
+local_config = {
+  'user': 'root',
+  'password': 'lee'
+}
+
+remote_config = {
   'user': 'root',
   'password': 'Max123',
   'host': 'czds68.yicp.io',
   'port':'4406',
   'database': 'amazon'
 }
+
+config = local_config
 
 DB_NAME = 'amazon'
 
@@ -78,9 +85,9 @@ def create_database(cursor):
         print("Failed creating database: {}".format(err))
         exit(1)
 
-
 cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
+
 try:
     cnx.database = DB_NAME  
 except mysql.connector.Error as err:
