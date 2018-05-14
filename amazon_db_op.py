@@ -219,3 +219,6 @@ set_userinfo(**test_update_accountinfo_mac)
 #get_userinfo('accountquota', 'shipaddress')
 cursor.close()
 cnx.close()
+
+if __name__=='__main__':
+    print('haha')
