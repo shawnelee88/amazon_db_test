@@ -18,14 +18,9 @@ local_config = {
     'port': '4406',
     'database': 'amazon'
 }
+
+config = local_config
 class accountinfo_db(object):
-    config = {
-        'user': 'root',
-        'password': 'Max123',
-        'host': 'czds68.yicp.io',
-        'port': '4406',
-        'database': 'amazon'
-    }
     sql_lock_read = ("LOCK TABLE accountinfo READ;")
     sql_lock_write = ("LOCK TABLE accountinfo WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
@@ -55,7 +50,7 @@ class accountinfo_db(object):
     accountinfo_fields = ('username', 'password', 'cookies', 'createdate', 'logindate', 'alive', 'MAC')
 
     def __init__(self):
-        self.cnx = mysql.connector.connect(**accountinfo_db.config)
+        self.cnx = mysql.connector.connect(**config)
         return
     def add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(), alive=1, cookies=None, MAC=None):
         add_dll = {}
@@ -162,13 +157,6 @@ class accountinfo_db(object):
 
 
 class shipaddress_db(object):
-    config = {
-        'user': 'root',
-        'password': 'Max123',
-        'host': 'czds68.yicp.io',
-        'port': '4406',
-        'database': 'amazon'
-    }
     sql_lock_read = ("LOCK TABLE shipaddress READ;")
     sql_lock_write = ("LOCK TABLE shipaddress WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
@@ -197,7 +185,7 @@ class shipaddress_db(object):
     shipaddress_fields = ('username', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber')
 
     def __init__(self):
-        self.cnx = mysql.connector.connect(**shipaddress_db.config)
+        self.cnx = mysql.connector.connect(**config)
         return
 
     def add_item(self, username, fullname, address=None, postalcode=None, city=None, state=None, phonenumber=None):
@@ -312,13 +300,6 @@ class shipaddress_db(object):
 
 
 class finance_db(object):
-    config = {
-        'user': 'root',
-        'password': 'Max123',
-        'host': 'czds68.yicp.io',
-        'port': '4406',
-        'database': 'amazon'
-    }
     sql_lock_read = ("LOCK TABLE finance READ;")
     sql_lock_write = ("LOCK TABLE finance WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
@@ -358,7 +339,7 @@ class finance_db(object):
     sql_get_info = ("SELECT * FROM finance;")
 
     def __init__(self):
-        self.cnx = mysql.connector.connect(**finance_db.config)
+        self.cnx = mysql.connector.connect(**config)
         return
 
     def add_item(self, username, nameoncard, ccnumber, ccmonth, ccyear,
@@ -539,13 +520,6 @@ class finance_db(object):
 
 
 class accountquota_db(object):
-    config = {
-        'user': 'root',
-        'password': 'Max123',
-        'host': 'czds68.yicp.io',
-        'port': '4406',
-        'database': 'amazon'
-    }
     sql_lock_read = ("LOCK TABLE accountquota READ;")
     sql_lock_write = ("LOCK TABLE accountquota WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
@@ -568,7 +542,7 @@ class accountquota_db(object):
 
     def __init__(self):
         try:
-            self.cnx = mysql.connector.connect(**accountquota_db.config)
+            self.cnx = mysql.connector.connect(**config)
         except mysql.connector.Error as err:
             print('haha', err)
         return
