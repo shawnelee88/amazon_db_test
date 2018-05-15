@@ -87,6 +87,18 @@ TABLES['accountquota'] = (
     "PRIMARY KEY (`accountid`)"
     ") ENGINE=InnoDB")
 
+TABLES['productinfo'] = (
+    "CREATE TABLE `productinfo` ("
+    "`productid` INT UNSIGNED AUTO_INCREMENT,"
+    "`asin` VARCHAR(50), "
+    "`department` VARCHAR(50),"
+    "`busybox_price` FLOAT ,"
+    "`order_price` FLOAT,"
+    "`keyword` VARCHAR(100),"
+    "`brand` VARCHAR(50),"
+    "PRIMARY KEY (`productid`)"
+    ") ENGINE=InnoDB")
+
 def create_database(cursor):
     try:
         cursor.execute("CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
