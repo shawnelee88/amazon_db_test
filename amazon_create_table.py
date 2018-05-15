@@ -17,7 +17,15 @@ remote_config = {
   'database': 'amazon'
 }
 
-config = local_config
+mac_config = {
+  'user': 'root',
+  'password': 'lee',
+  'host': '192.168.0.3',
+  'port':'3306',
+  'database': 'amazon'
+}
+
+config = mac_config
 
 DB_NAME = 'amazon'
 
@@ -29,7 +37,8 @@ TABLES['accountinfo'] = (
     " `password` VARCHAR(30)," 
     " `cookies` VARCHAR(50)," 
     " `createdate` DATETIME,"
-    " `logindate` DATETIME," 
+    " `logindate` DATETIME,"
+    " `lastbuy` DATETIME,"
     " `alive` CHAR(1)," 
     " `MAC` VARCHAR(20),"
     " PRIMARY KEY (`userid`)"
