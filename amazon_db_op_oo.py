@@ -26,20 +26,21 @@ mac_config = {
   'port':'3306',
   'database': 'amazon'
 }
-config = mac_config
+config = remote_config
 class accountinfo_db(object):
     sql_lock_read = ("LOCK TABLE accountinfo READ;")
     sql_lock_write = ("LOCK TABLE accountinfo WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
     #args in tuple form
     sql_add_info_tuple = ("INSERT INTO accountinfo"
-                    "(username, password, cookies, createdate, logindate, lastbuy, alive, MAC)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);")
+                    "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC)"
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);")
     sql_update_pw_tuple = ("UPDATE accountinfo SET password=%s WHERE username=%s;")
     sql_update_cookie_tuple = ("UPDATE accountinfo SET cookies=%s WHERE username=%s;")
     sql_update_createdate_tuple = ("UPDATE accountinfo SET createdate=%s WHERE username=%s;")
     sql_update_logindate_tuple = ("UPDATE accountinfo SET logindate=%s WHERE username=%s;")
     sql_update_lastbuy_tuple = ("UPDATE accountinfo SET lastbuy=%s WHERE username=%s;")
+    sql_update_in_use_tuple = ("UPDATE accountinfo SET in_use=%s WHERE username=%s;")
     sql_update_alive_tuple = ("UPDATE accountinfo SET alive=%s WHERE username=%s;")
     sql_update_MAC_tuple = ("UPDATE accountinfo SET MAC=%s WHERE username=%s;")
 
@@ -52,16 +53,17 @@ class accountinfo_db(object):
     sql_update_createdate_dict = ("UPDATE accountinfo SET createdate=%(createdate)s WHERE username=%(username)s;")
     sql_update_logindate_dict = ("UPDATE accountinfo SET logindate=%(logindate)s WHERE username=%(username)s;")
     sql_update_lastbuy_dict = ("UPDATE accountinfo SET lastbuy=%(lastbuy)s WHERE username=%(username)s;")
+    sql_update_in_use_dict = ("UPDATE accountinfo SET in_use=%(in_use)s WHERE username=%(username)s;")
     sql_update_alive_dict = ("UPDATE accountinfo SET alive=%(alive)s WHERE username=%(username)s;")
     sql_update_MAC_dict = ("UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
 
     sql_get_info = ("SELECT * FROM accountinfo;")
-    accountinfo_fields = ('username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'alive', 'MAC')
+    accountinfo_fields = ('username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'in_use', 'alive', 'MAC')
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
         return
-    def add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(), lastbuy=datetime(1997,1,1), alive=1, cookies=None, MAC=None):
+    def add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(), lastbuy=datetime(1997,1,1), in_use=0, alive=1, cookies=None, MAC=None):
         add_dll = {}
         add_dll['username'] = username
         add_dll['passwd'] = passwd
@@ -69,6 +71,7 @@ class accountinfo_db(object):
         add_dll['createdate'] = createdate
         add_dll['logindate'] = logindate
         add_dll['lastbuy'] = lastbuy
+        add_dll['in_use'] = in_use
         add_dll['alive'] = alive
         add_dll['MAC'] = MAC
         print(add_dll)
@@ -135,6 +138,18 @@ class accountinfo_db(object):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_write)
         self.cursor.execute(accountinfo_db.sql_update_lastbuy_dict, update_dll)
+        self.cursor.execute(accountinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+    def update_in_use(self, username, in_use):
+        update_dll = {}
+        update_dll['username'] = username
+        if in_use:
+            update_dll['in_use'] = in_use
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(accountinfo_db.sql_lock_write)
+        self.cursor.execute(accountinfo_db.sql_update_in_use_dict, update_dll)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -640,174 +655,193 @@ class accountquota_db(object):
 
 
 def dbg_accountinfo():
+    first_time = 0
     db = accountinfo_db()
-    #db.add_item('lee', '456456')
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
-    db.update_passwd('lee', '123345')
     rslt = db.get_item()
     for row in rslt:
         print(row)
 
-    db.update_cookies('lee', 'asdfsdfghgh')
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+    if first_time == 1:
+        db.add_item('lee', '456456')
+    else:
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_passwd('lee', '123345')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.update_alive('lee', 1)
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+        db.update_cookies('lee', 'asdfsdfghgh')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.update_createdate('lee', datetime.now())
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+        db.update_alive('lee', 1)
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.update_logindate('lee', datetime.now())
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+        db.update_createdate('lee', datetime.now())
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.update_lastbuy('lee', datetime.now())
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+        db.update_logindate('lee', datetime.now())
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.update_MAC('lee', '00-11-22-33-44-55')
-    rslt = db.get_item()
-    for row in rslt:
-        print(row)
+        db.update_lastbuy('lee', datetime.now())
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+
+        db.update_in_use('lee', 1)
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+
+        db.update_MAC('lee', '00-11-22-33-44-55')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
     db.close()
     del db
 
 
 def dbg_shipaddr():
+    first_time = 1
     db = shipaddress_db()
     rslt = db.get_item()
     for row in rslt:
         print(row)
+    if first_time == 1:
+        db.add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
+    else:
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
-    db.add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    #
-    # db.update_address('MarvinDickerson987@foxairmail.com', 'hetianshangcheng')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_city('MarvinDickerson987@foxairmail.com', 'hz')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_fullname('MarvinDickerson987@foxairmail.com', 'lleeeooo')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_phonenumber('MarvinDickerson987@foxairmail.com', '123123123')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_postalcode('MarvinDickerson987@foxairmail.com', '310000')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_state('MarvinDickerson987@foxairmail.com', 'zj')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
+        db.update_address('MarvinDickerson987@foxairmail.com', 'hetianshangcheng')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_city('MarvinDickerson987@foxairmail.com', 'hz')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_fullname('MarvinDickerson987@foxairmail.com', 'lleeeooo')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_phonenumber('MarvinDickerson987@foxairmail.com', '123123123')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_postalcode('MarvinDickerson987@foxairmail.com', '310000')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_state('MarvinDickerson987@foxairmail.com', 'zj')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
     db.close()
     del db
 
 def dbg_finance():
+    first_time = 1
     db = finance_db()
     rslt = db.get_item()
     for row in rslt:
         print(row)
 
-    db.add_item('MarvinDickerson987@foxairmail.com','Marvin Dickerson','4859106480044568',
+    if first_time == 1:
+        db.add_item('MarvinDickerson987@foxairmail.com','Marvin Dickerson','4859106480044568',
                  '04','2022','TDLan-549','Marvin Dickerson','6 redglobe ct','29681-3615',
                  'simpsonville','SC','8645612655')
-    # db.update_state('MarvinDickerson987@foxairmail.com', 'zj')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_postalcode('MarvinDickerson987@foxairmail.com', '310000')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_fullname('MarvinDickerson987@foxairmail.com', 'leooooooo')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_phonenumber('MarvinDickerson987@foxairmail.com', '123123345345')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_city('MarvinDickerson987@foxairmail.com', 'hz')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_address('MarvinDickerson987@foxairmail.com', 'HTSC')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_ccmonth('MarvinDickerson987@foxairmail.com', '05')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_ccnumber('MarvinDickerson987@foxairmail.com', '99999999')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_ccyear('MarvinDickerson987@foxairmail.com', '2011')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_checkaccount('MarvinDickerson987@foxairmail.com', 'shawnelee88')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_nameoncard('MarvinDickerson987@foxairmail.com', 'XML')
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
+    else:
+        db.update_state('MarvinDickerson987@foxairmail.com', 'zj')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_postalcode('MarvinDickerson987@foxairmail.com', '310000')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_fullname('MarvinDickerson987@foxairmail.com', 'leooooooo')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_phonenumber('MarvinDickerson987@foxairmail.com', '123123345345')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_city('MarvinDickerson987@foxairmail.com', 'hz')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_address('MarvinDickerson987@foxairmail.com', 'HTSC')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_ccmonth('MarvinDickerson987@foxairmail.com', '05')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_ccnumber('MarvinDickerson987@foxairmail.com', '99999999')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_ccyear('MarvinDickerson987@foxairmail.com', '2011')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_checkaccount('MarvinDickerson987@foxairmail.com', 'shawnelee88')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_nameoncard('MarvinDickerson987@foxairmail.com', 'XML')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
 
     db.close()
     del db
 
 def dbg_accountquota():
+    first_time = 1
     db = accountquota_db()
     rslt = db.get_item()
     for row in rslt:
         print(row)
-
-    db.add_item('TDLan-549',200,800,10000)
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_mquota('TDLan-549',300)
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_wquota('TDLan-549',900)
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
-    # db.update_yquota('TDLan-549',10010)
-    # rslt = db.get_item()
-    # for row in rslt:
-    #     print(row)
+    if first_time == 1:
+        db.add_item('TDLan-549',200,800,10000)
+    else:
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_mquota('TDLan-549',300)
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_wquota('TDLan-549',900)
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_yquota('TDLan-549',10010)
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
     db.close()
     del db
 
 dbg_accountinfo()
-dbg_shipaddr()
-dbg_finance()
-dbg_accountquota()
+#dbg_shipaddr()
+#dbg_finance()
+#dbg_accountquota()
 
 if __name__=='__main__':
     pass

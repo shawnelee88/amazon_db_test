@@ -3,6 +3,7 @@
 
 import mysql.connector
 from mysql.connector import errorcode
+import logging
 
 local_config = {
   'user': 'root',
@@ -25,7 +26,7 @@ mac_config = {
   'database': 'amazon'
 }
 
-config = mac_config
+config = remote_config
 
 DB_NAME = 'amazon'
 
@@ -39,6 +40,7 @@ TABLES['accountinfo'] = (
     " `createdate` DATETIME,"
     " `logindate` DATETIME,"
     " `lastbuy` DATETIME,"
+    " `in_use` CHAR(1),"
     " `alive` CHAR(1)," 
     " `MAC` VARCHAR(20),"
     " PRIMARY KEY (`userid`)"
@@ -106,7 +108,10 @@ def create_database(cursor):
         print("Failed creating database: {}".format(err))
         exit(1)
 
-cnx = mysql.connector.connect(**config)
+try:
+    cnx = mysql.connector.connect(**config)
+except mysql.connector.Error as err:
+    print("Failed creating database: {}".format(err))
 cursor = cnx.cursor()
 
 try:
