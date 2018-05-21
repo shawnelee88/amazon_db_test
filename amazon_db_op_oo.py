@@ -83,7 +83,7 @@ class accountinfo_db(object):
         self.cursor.close()
         return
 
-    def get_available_user(self, min_val, time_cond, **asin_task):
+    def get_available_user(self, min_val, buyer_nterval, **asin_task):
         #user-->wquota
         #user->mquota
 
@@ -659,6 +659,136 @@ class accountquota_db(object):
     def close(self):
         self.cnx.close()
 
+class productinfo_db(object):
+    sql_lock_read = ("LOCK TABLE productinfo READ;")
+    sql_lock_write = ("LOCK TABLE productinfo WRITE;")
+    sql_unlock_all = ("UNLOCK TABLES;")
+    # args in tuple form
+    sql_add_productinfo_tuple = ("INSERT INTO productinfo"
+                           "(asin, department, busybox_price, order_price, keyword, brand)"
+                           "VALUES (%s,%s,%s,%s,%s,%s)")
+    sql_update_productinfo_department_tuple = ("UPDATE productinfo SET department=%s WHERE asin=%s;")
+    sql_update_productinfo_busybox_price_tuple = ("UPDATE productinfo SET busybox_price=%s WHERE asin=%s;")
+    sql_update_productinfo_order_price_tuple = ("UPDATE productinfo SET order_price=%s WHERE asin=%s;")
+    sql_update_productinfo_keyword_tuple = ("UPDATE productinfo SET keyword=%s WHERE asin=%s;")
+    sql_update_productinfo_brand_tuple = ("UPDATE productinfo SET brand=%s WHERE asin=%s;")
+
+    # args in dict form
+    sql_add_productinfo_dict = ("INSERT INTO productinfo"
+                           "(asin, department, busybox_price, order_price, keyword, brand)"
+                           "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s)")
+    sql_update_productinfo_department_dict = ("UPDATE productinfo SET department=%(department)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_busybox_price_dict = ("UPDATE productinfo SET busybox_price=%(busybox_price)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_order_price_dict = ("UPDATE productinfo SET order_price=%(order_price)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_keyword_dict = ("UPDATE productinfo SET keyword=%(keyword)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_brand_dict = ("UPDATE productinfo SET brand=%(brand)s WHERE asin=%(asin)s;")
+    sql_get_info = ("SELECT * FROM productinfo;")
+
+    def __init__(self):
+        try:
+            self.cnx = mysql.connector.connect(**config)
+        except mysql.connector.Error as err:
+            print('haha2', err)
+        return
+
+    def add_item(self, asin, department, busybox_price, order_price, keyword, brand):
+        add_dll = {}
+        add_dll['asin'] = asin
+        add_dll['department'] = department
+        add_dll['busybox_price'] = busybox_price
+        add_dll['order_price'] = order_price
+        add_dll['keyword'] = keyword
+        add_dll['brand'] = brand
+        print(add_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_add_productinfo_dict, add_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+        return
+
+    def get_item(self):
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_get_info)
+        result = self.cursor.fetchall()
+        # print(result)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+        return result
+
+    def update_department(self, asin, department):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if department:
+            update_dll['department'] = department
+        # print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_update_productinfo_department_dict, update_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+
+    def update_busybox_price(self, asin, busybox_price):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if busybox_price:
+            update_dll['busybox_price'] = busybox_price
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_update_productinfo_busybox_price_dict, update_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+
+    def update_order_price(self, asin, order_price):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if order_price:
+            update_dll['order_price'] = order_price
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_update_productinfo_order_price_dict, update_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+
+    def update_keyword(self, asin, keyword):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if keyword:
+            update_dll['keyword'] = keyword
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_update_productinfo_keyword_dict, update_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+
+    def update_brand(self, asin, brand):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if brand:
+            update_dll['brand'] = brand
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_write)
+        self.cursor.execute(productinfo_db.sql_update_productinfo_brand_dict, update_dll)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+
+    def close(self):
+        self.cnx.close()
+
+
 class ordertask_db(object):
     sql_lock_read = ("LOCK TABLE ordertask READ;")
     sql_lock_write = ("LOCK TABLE ordertask WRITE;")
@@ -684,7 +814,7 @@ class ordertask_db(object):
         try:
             self.cnx = mysql.connector.connect(**config)
         except mysql.connector.Error as err:
-            print('haha2', err)
+            print('haha3', err)
         return
 
     def add_item(self, username,asin,num,order_date=datetime.now()):
@@ -918,6 +1048,49 @@ def dbg_accountquota():
     db.close()
     del db
 
+
+def dbg_productinfo():
+    first_time = 0
+    db = productinfo_db()
+    rslt = db.get_item()
+    for row in rslt:
+        print(row)
+    if first_time == 1:
+        db.add_item('B077RYNF82','Electronics','89.99','89.99', 'wireless bluetooth earbud', 'STERIO')
+        db.add_item('B07439HNFT', 'Electronics', '94.99', '94.99', 'dash cam 4k', 'STERIO')
+    else:
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_department('B077RYNF82','telecom')
+        db.update_department('B07439HNFT', 'unicorn')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_busybox_price('B077RYNF82','100.00')
+        db.update_busybox_price('B07439HNFT', '120.00')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_busybox_price('B077RYNF82', '110.00')
+        db.update_busybox_price('B07439HNFT', '130.00')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_keyword('B077RYNF82', 'asdfasdfasdfasdf')
+        db.update_keyword('B07439HNFT', 'oiuiuououou')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+        db.update_brand('B077RYNF82', 'huawei')
+        db.update_brand('B07439HNFT', 'HIK')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
+    db.close()
+    del db
+
+
 def dbg_ordertask():
     db = ordertask_db()
     rslt = db.get_item()
@@ -931,10 +1104,12 @@ def dbg_ordertask():
     db.close()
     del db
 
+
 #dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
+dbg_productinfo()
 #dbg_ordertask()
 
 if __name__=='__main__':
