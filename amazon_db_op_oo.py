@@ -82,6 +82,12 @@ class accountinfo_db(object):
         self.cnx.commit()
         self.cursor.close()
         return
+
+    def get_available_user(self, min_val, time_cond, **asin_task):
+        #user-->wquota
+        #user->mquota
+
+        pass
     def get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_read)
@@ -581,7 +587,7 @@ class accountquota_db(object):
         try:
             self.cnx = mysql.connector.connect(**config)
         except mysql.connector.Error as err:
-            print('haha', err)
+            print('haha1', err)
         return
 
     def add_item(self, checkaccount,wquota,mquota,yquota):
@@ -652,6 +658,67 @@ class accountquota_db(object):
 
     def close(self):
         self.cnx.close()
+
+class ordertask_db(object):
+    sql_lock_read = ("LOCK TABLE ordertask READ;")
+    sql_lock_write = ("LOCK TABLE ordertask WRITE;")
+    sql_unlock_all = ("UNLOCK TABLES;")
+    # args in tuple form
+    sql_add_ordertask_tuple = ("INSERT INTO ordertask"
+                 "(username, asin, num, order_date)"
+                 "VALUES (%s,%s,%s,%s)")
+    sql_update_ordertask_asin_tuple = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
+    sql_update_ordertask_num_tuple = ("UPDATE ordertask SET num=%s WHERE username=%s;")
+    sql_update_ordertask_order_date_tuple = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+
+    # args in dict form
+    sql_add_ordertask_dict = ("INSERT INTO ordertask"
+                           "(username, asin, num, order_date)"
+                           "VALUES (%(username)s,%(asin)s,%(num)s, %(order_date)s)")
+    sql_update_ordertask_asin_dict = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
+    sql_update_ordertask_num_dict = ("UPDATE ordertask SET num=%s WHERE username=%s;")
+    sql_update_ordertask_order_date_dict = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+    sql_get_info = ("SELECT * FROM ordertask;")
+
+    def __init__(self):
+        try:
+            self.cnx = mysql.connector.connect(**config)
+        except mysql.connector.Error as err:
+            print('haha2', err)
+        return
+
+    def add_item(self, username,asin,num,order_date=datetime.now()):
+        add_dll = {}
+        add_dll['username'] = username
+        add_dll['asin'] = asin
+        add_dll['num'] = num
+        add_dll['order_date'] = order_date
+        print(add_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(ordertask_db.sql_lock_write)
+        self.cursor.execute(ordertask_db.sql_add_ordertask_dict, add_dll)
+        self.cursor.execute(ordertask_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+        return
+
+    def get_item(self):
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(ordertask_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(ordertask_db.sql_get_info)
+        result = self.cursor.fetchall()
+        # print(result)
+        self.cursor.execute(ordertask_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+        return result
+
+    def close(self):
+        self.cnx.close()
+
+
+
 
 
 def dbg_accountinfo():
@@ -759,51 +826,63 @@ def dbg_finance():
         print(row)
 
     if first_time == 1:
-        db.add_item('MarvinDickerson987@foxairmail.com','Marvin Dickerson','4859106480044568',
-                 '04','2022','TDLan-549','Marvin Dickerson','6 redglobe ct','29681-3615',
+        db.add_item('SteveCarsey@foxairmail.com','George Troni','4859103482757156',
+                 '04','2022','TDLan-549','George Troni','6 redglobe ct','29681-3615',
                  'simpsonville','SC','8645612655')
+        db.add_item('AnnieLee@foxairmail.com', 'Annie Lee', '4859109471703325',
+                    '04', '2022', 'TDLan-549', 'Annie Lee', '193 central st. ste W102', '03051',
+                    'nashua', 'NH', '3054146488')
+        db.add_item('BingTan89@foxairmail.com', 'Bing Tan', '4859101936347160',
+                    '04', '2022', 'TDLan-549', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3D', '48910',
+                    'Lansing', 'MI', '6508890052')
+        db.add_item('MineralDick@foxairmail.com', 'Mineral Dick', '4859107167920401',
+                    '04', '2022', 'TDLan-549', 'Mineral Dick', '193 central st. Apt W253', '03051',
+                    'nashua', 'NH', '4242237285')
+        rslt = db.get_item()
+        for row in rslt:
+            print(row)
     else:
-        db.update_state('MarvinDickerson987@foxairmail.com', 'zj')
+        db.update_state('SteveCarsey@foxairmail.com', 'zj')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_postalcode('MarvinDickerson987@foxairmail.com', '310000')
+        db.update_postalcode('SteveCarsey@foxairmail.com', '310000')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_fullname('MarvinDickerson987@foxairmail.com', 'leooooooo')
+        db.update_fullname('SteveCarsey@foxairmail.com', 'leooooooo')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_phonenumber('MarvinDickerson987@foxairmail.com', '123123345345')
+        db.update_phonenumber('SteveCarsey@foxairmail.com', '123123345345')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_city('MarvinDickerson987@foxairmail.com', 'hz')
+        db.update_city('SteveCarsey@foxairmail.com', 'hz')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_address('MarvinDickerson987@foxairmail.com', 'HTSC')
+        db.update_address('SteveCarsey@foxairmail.com', 'HTSC')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_ccmonth('MarvinDickerson987@foxairmail.com', '05')
+        db.update_ccmonth('SteveCarsey@foxairmail.com', '05')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_ccnumber('MarvinDickerson987@foxairmail.com', '99999999')
+        db.update_ccnumber('SteveCarsey@foxairmail.com', '99999999')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_ccyear('MarvinDickerson987@foxairmail.com', '2011')
+        db.update_ccyear('SteveCarsey@foxairmail.com', '2011')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_checkaccount('MarvinDickerson987@foxairmail.com', 'shawnelee88')
+        db.update_checkaccount('SteveCarsey@foxairmail.com', 'shawnelee88')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_nameoncard('MarvinDickerson987@foxairmail.com', 'XML')
+        db.update_nameoncard('SteveCarsey@foxairmail.com', 'XML')
         rslt = db.get_item()
         for row in rslt:
             print(row)
@@ -819,6 +898,7 @@ def dbg_accountquota():
         print(row)
     if first_time == 1:
         db.add_item('TDLan-549',200,800,10000)
+        db.add_item('BOALI-848', 200, 800, 10000)
     else:
         rslt = db.get_item()
         for row in rslt:
@@ -838,10 +918,24 @@ def dbg_accountquota():
     db.close()
     del db
 
-dbg_accountinfo()
+def dbg_ordertask():
+    db = ordertask_db()
+    rslt = db.get_item()
+    for row in rslt:
+        print(row)
+    db.add_item('lee','B077RYNF82',10)
+    db.add_item('lee', 'B07439HNFT', 20)
+    db.add_item('AnnieLee@foxairmail.com', 'B07439HNFT', 30)
+    db.add_item('BingTan89@foxairmail.com', 'B07439HNFT', 40)
+    db.add_item('MineralDick@foxairmail.com', 'B077RYNF82', 50)
+    db.close()
+    del db
+
+#dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
+#dbg_ordertask()
 
 if __name__=='__main__':
     pass

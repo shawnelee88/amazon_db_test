@@ -101,6 +101,16 @@ TABLES['productinfo'] = (
     "PRIMARY KEY (`productid`)"
     ") ENGINE=InnoDB")
 
+TABLES['ordertask'] = (
+    "CREATE TABLE `ordertask` ("
+    "`ordertaskid` INT UNSIGNED AUTO_INCREMENT,"
+    "`username` VARCHAR(80), "
+    "`asin` VARCHAR(50),"
+    "`num` INT,"
+    "`order_date` DATETIME,"
+    "PRIMARY KEY (`ordertaskid`)"
+    ") ENGINE=InnoDB")
+
 def create_database(cursor):
     try:
         cursor.execute("CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
