@@ -58,6 +58,7 @@ class accountinfo_db(object):
     sql_update_MAC_dict = ("UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
 
     sql_get_info = ("SELECT * FROM accountinfo;")
+    sql_get_info_by_lastbuy = ("SELECT username, password, cookies, createdate, logindate, lastbuy, alive, MAC FROM accountinfo WHERE lastbuy < %s;")
     accountinfo_fields = ('username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'in_use', 'alive', 'MAC')
 
     def __init__(self):
@@ -83,11 +84,7 @@ class accountinfo_db(object):
         self.cursor.close()
         return
 
-    def get_available_user(self, min_val, buyer_nterval, **asin_task):
-        #user-->wquota
-        #user->mquota
 
-        pass
     def get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_read)
@@ -95,6 +92,20 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_get_info)
         result = self.cursor.fetchall()
         #print(result)
+        self.cursor.execute(accountinfo_db.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+        return result
+
+    def get_item_by_lastbuy(self, interval):
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(accountinfo_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        print(interval)
+        self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy, (datetime.now(),))
+        #self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy)
+        result = self.cursor.fetchall()
+        print(result)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -583,6 +594,9 @@ class accountquota_db(object):
     sql_update_accountquota_yquota_dict = ("UPDATE accountquota SET yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
     sql_get_info = ("SELECT * FROM accountquota;")
 
+    sql_get_one_info_tuple = ("SELECT wquota, mquota, yquota FROM accountquota WHERE checkaccount=%s;")
+    sql_get_one_info_dict = ("SELECT wquota, mquota, yquota FROM accountquota WHERE checkaccount=%(checkaccount)s;")
+    accountquota_fields = ('checkaccount', 'wquota', 'mquota', 'yquota')
     def __init__(self):
         try:
             self.cnx = mysql.connector.connect(**config)
@@ -605,6 +619,7 @@ class accountquota_db(object):
         self.cursor.close()
         return
 
+    #get all accounts' quota
     def get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_read)
@@ -613,10 +628,32 @@ class accountquota_db(object):
         result = self.cursor.fetchall()
         # print(result)
         self.cursor.execute(accountquota_db.sql_unlock_all)
-        self.cnx.commit()
         self.cursor.close()
         return result
 
+    #input specific user
+    #output all related info
+    def get_one_item(self, checkaccount):
+        query = {}
+        query['checkaccount'] = checkaccount
+        print('haha', query)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(accountquota_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(accountquota_db.sql_get_one_info_dict, query)
+        for (wquota, mquota, yquota) in self.cursor:
+            print(wquota, mquota, yquota)
+        result = {}
+        result['checkaccount'] = checkaccount
+        result['wquota'] = wquota
+        result['mquota'] = mquota
+        result['yquota'] = yquota
+        #result = self.cursor.fetchall()
+        #print(result)
+        self.cursor.execute(accountquota_db.sql_unlock_all)
+        self.cursor.close()
+        return result
+        #return result
     def update_wquota(self, checkaccount, wquota):
         update_dll = {}
         update_dll['checkaccount'] = checkaccount
@@ -1104,13 +1141,45 @@ def dbg_ordertask():
     db.close()
     del db
 
+#select candidates which meets some requirements
+#min_val:each buyer should spend minimum money
+#buyer_interval:lastbuy time should be more than this, in hrs
+def get_available_user(min_val, buyer_interval, **asin_task):
+    # print(asin_task)
+    # for key in asin_task.keys():
+    #     print(key)
+    db1_accountinfo = accountinfo_db()
+    db2_accountquota = accountquota_db()
+    db1_accountinfo.get_item_by_lastbuy(10)
+    # rslt = db2_accountquota.get_one_item('TDLan-549')
+    # print(rslt)
+    # rslt = db2_accountquota.get_one_item('BOALI-848')
+    # print(rslt)
+    # rslt = db2_accountquota.get_item()
+    # for row in rslt:
+    #     print(row)
+
+    #product_info = {}
+    #for key in asin_task.keys():
+        #print(key)
+        #price = 0
+        #db2_accountquota.get_item()
+        #product_info[key]
+
+    db1_accountinfo.close()
+    del db1_accountinfo
+    db2_accountquota.close()
+    del db2_accountquota
+    pass
+
 
 #dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
-dbg_productinfo()
+#dbg_productinfo()
 #dbg_ordertask()
+get_available_user(100, 24, **{'B077RYNF82':10, 'B07439HNFT':20})
 
 if __name__=='__main__':
     pass
