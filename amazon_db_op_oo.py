@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import mysql.connector
 from mysql.connector import errorcode
 import logging
@@ -58,8 +58,9 @@ class accountinfo_db(object):
     sql_update_MAC_dict = ("UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
 
     sql_get_info = ("SELECT * FROM accountinfo;")
-    sql_get_info_by_lastbuy = ("SELECT username, password, cookies, createdate, logindate, lastbuy, alive, MAC FROM accountinfo WHERE lastbuy < %s;")
-    accountinfo_fields = ('username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'in_use', 'alive', 'MAC')
+    sql_get_info_by_lastbuy_tuple = ("SELECT * FROM accountinfo WHERE lastbuy < %s;")
+    sql_get_info_by_lastbuy_dict = ("SELECT * FROM accountinfo WHERE lastbuy < %(lastbuy)s;")
+    accountinfo_fields = ['userid', 'username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'in_use', 'alive', 'MAC']
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
@@ -101,15 +102,22 @@ class accountinfo_db(object):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_read)
         self.cursor = self.cnx.cursor()
-        print(interval)
-        self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy, (datetime.now(),))
-        #self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy)
+
+        tdiff = timedelta(hours=interval)
+        self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy_tuple, (datetime.now() + tdiff,))
         result = self.cursor.fetchall()
-        print(result)
+        # print(result)
+        candidate_users = []
+        for row in result:
+            #print(row)
+            item = dict(zip(accountinfo_db.accountinfo_fields, row))
+            #print(item)
+            candidate_users.append(item)
+        #print(candidate_users)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-        return result
+        return candidate_users
     def update_passwd(self, username, passwd):
         update_dll = {}
         update_dll['username'] = username
@@ -236,7 +244,9 @@ class shipaddress_db(object):
     sql_update_shipaddress_state_dict = ("UPDATE shipaddress SET state=%(state)s WHERE username=%(username)s;")
     sql_update_shipaddress_phonenumber_dict = ("UPDATE shipaddress SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
     sql_get_info = ("SELECT * FROM shipaddress;")
-    shipaddress_fields = ('username', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber')
+    sql_get_info_by_username_tuple = ("SELECT * FROM shipaddress WHERE username=%s;")
+    sql_get_info_by_username_dict = ("SELECT * FROM shipaddress WHERE username=%(username)s;")
+    shipaddress_fields = ['addrid', 'username', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber']
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
@@ -271,6 +281,27 @@ class shipaddress_db(object):
         self.cnx.commit()
         self.cursor.close()
         return result
+
+    def get_item_by_username(self, username):
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(shipaddress_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        query = {}
+        query['username'] = username
+
+        self.cursor.execute(shipaddress_db.sql_get_info_by_username_dict, query)
+        result = self.cursor.fetchall()
+        print(result)
+        candidate_shipaddr = []
+        for row in result:
+            # print(row)
+            item = dict(zip(shipaddress_db.shipaddress_fields, row))
+            # print(item)
+            candidate_shipaddr.append(item)
+        # print(candidate_users)
+        self.cursor.execute(shipaddress_db.sql_unlock_all)
+        self.cursor.close()
+        return candidate_shipaddr
 
     def update_fullname(self, username, fullname):
         update_dll = {}
@@ -388,9 +419,11 @@ class finance_db(object):
     sql_update_finance_state_dict = ("UPDATE finance SET state=%(state)s WHERE username=%(username)s;")
     sql_update_finance_phonenumber_dict = ("UPDATE finance SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
     sql_update_finance_checkaccount_dict = ("UPDATE finance SET checkaccount=%(checkaccount)s WHERE username=%(username)s;")
-    finance_fields = ('username', 'nameoncard', 'ccnumber', 'ccmonth', 'ccyear',
-                      'checkaccount', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber')
+    finance_fields = ['cardid', 'username', 'nameoncard', 'ccnumber', 'ccmonth', 'ccyear',
+                      'checkaccount', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber']
     sql_get_info = ("SELECT * FROM finance;")
+    sql_get_info_by_username_tuple = ("SELECT * FROM finance WHERE username=%s;")
+    sql_get_info_by_username_dict = ("SELECT * FROM finance WHERE username=%(username)s;")
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
@@ -432,6 +465,23 @@ class finance_db(object):
         self.cursor.close()
         return result
 
+    def get_item_by_username(self, username):
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(finance_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(finance_db.sql_get_info_by_username_tuple, (username,))
+        result = self.cursor.fetchall()
+        # print(result)
+        candidate_finance = []
+        for row in result:
+            # print(row)
+            item = dict(zip(finance_db.finance_fields, row))
+            # print(item)
+            candidate_finance.append(item)
+        # print(candidate_finance)
+        self.cursor.execute(accountinfo_db.sql_unlock_all)
+        self.cursor.close()
+        return candidate_finance
     def update_nameoncard(self, username, nameoncard):
         update_dll = {}
         update_dll['username'] = username
@@ -594,9 +644,9 @@ class accountquota_db(object):
     sql_update_accountquota_yquota_dict = ("UPDATE accountquota SET yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
     sql_get_info = ("SELECT * FROM accountquota;")
 
-    sql_get_one_info_tuple = ("SELECT wquota, mquota, yquota FROM accountquota WHERE checkaccount=%s;")
-    sql_get_one_info_dict = ("SELECT wquota, mquota, yquota FROM accountquota WHERE checkaccount=%(checkaccount)s;")
-    accountquota_fields = ('checkaccount', 'wquota', 'mquota', 'yquota')
+    sql_get_one_info_tuple = ("SELECT * FROM accountquota WHERE checkaccount=%s;")
+    sql_get_one_info_dict = ("SELECT * FROM accountquota WHERE checkaccount=%(checkaccount)s;")
+    accountquota_fields = ['accountid', 'checkaccount', 'wquota', 'mquota', 'yquota']
     def __init__(self):
         try:
             self.cnx = mysql.connector.connect(**config)
@@ -636,24 +686,21 @@ class accountquota_db(object):
     def get_one_item(self, checkaccount):
         query = {}
         query['checkaccount'] = checkaccount
-        print('haha', query)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_read)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_get_one_info_dict, query)
-        for (wquota, mquota, yquota) in self.cursor:
-            print(wquota, mquota, yquota)
-        result = {}
-        result['checkaccount'] = checkaccount
-        result['wquota'] = wquota
-        result['mquota'] = mquota
-        result['yquota'] = yquota
-        #result = self.cursor.fetchall()
-        #print(result)
+        result = self.cursor.fetchall()
+        quota_rslt = []
+        for row in result:
+            item = dict(zip(accountquota_db.accountquota_fields, row))
+            #print(item)
+            quota_rslt.append(item)
+        #print(quota_rslt)
         self.cursor.execute(accountquota_db.sql_unlock_all)
         self.cursor.close()
-        return result
-        #return result
+        return quota_rslt
+
     def update_wquota(self, checkaccount, wquota):
         update_dll = {}
         update_dll['checkaccount'] = checkaccount
@@ -720,6 +767,9 @@ class productinfo_db(object):
     sql_update_productinfo_keyword_dict = ("UPDATE productinfo SET keyword=%(keyword)s WHERE asin=%(asin)s;")
     sql_update_productinfo_brand_dict = ("UPDATE productinfo SET brand=%(brand)s WHERE asin=%(asin)s;")
     sql_get_info = ("SELECT * FROM productinfo;")
+    sql_get_one_info_tuple = ("SELECT * FROM productinfo WHERE asin=%s;")
+    sql_get_one_info_dict = ("SELECT * FROM productinfo WHERE asin=%(asin)s;")
+    productinfo_fields = ['productid', 'asin', 'department', 'busybox_price', 'order_price', 'keyword', 'brand']
 
     def __init__(self):
         try:
@@ -757,6 +807,23 @@ class productinfo_db(object):
         self.cursor.close()
         return result
 
+    def get_one_item(self, asin):
+        query = {}
+        query['asin'] = asin
+        print('query', query)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_lock_read)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(productinfo_db.sql_get_one_info_dict, query)
+
+        result = self.cursor.fetchall()
+        assert self.cursor.rowcount == 1
+
+        product_rslt = dict(zip(productinfo_db.productinfo_fields, result[0]))
+        #print(product_rslt)
+        self.cursor.execute(productinfo_db.sql_unlock_all)
+        self.cursor.close()
+        return product_rslt
     def update_department(self, asin, department):
         update_dll = {}
         update_dll['asin'] = asin
@@ -1145,31 +1212,44 @@ def dbg_ordertask():
 #min_val:each buyer should spend minimum money
 #buyer_interval:lastbuy time should be more than this, in hrs
 def get_available_user(min_val, buyer_interval, **asin_task):
-    # print(asin_task)
-    # for key in asin_task.keys():
-    #     print(key)
+    #get available users according to buyer_interval, should not use users which have purchased recently
     db1_accountinfo = accountinfo_db()
-    db2_accountquota = accountquota_db()
-    db1_accountinfo.get_item_by_lastbuy(10)
-    # rslt = db2_accountquota.get_one_item('TDLan-549')
-    # print(rslt)
-    # rslt = db2_accountquota.get_one_item('BOALI-848')
-    # print(rslt)
-    # rslt = db2_accountquota.get_item()
-    # for row in rslt:
-    #     print(row)
+    db2_finance = finance_db()
+    db3_accountquota = accountquota_db()
+    db4_productinfo = productinfo_db()
+    db5_shipaddr = shipaddress_db()
+    accountinfo_rslt = db1_accountinfo.get_item_by_lastbuy(buyer_interval)
+    print('**********get users according to buyer_interval**********')
+    for row in accountinfo_rslt:
+        print(row['username'])
 
-    #product_info = {}
-    #for key in asin_task.keys():
-        #print(key)
-        #price = 0
-        #db2_accountquota.get_item()
-        #product_info[key]
+    # get users' shipaddress
+    shipaddr_result = db5_shipaddr.get_item_by_username('MarvinDickerson987@foxairmail.com')
+    print('\n**********get shipaddreess**********')
+    print(shipaddr_result)
+
+
+    #get bank-account those users are using, check if quota enough
+    print('\n**********get finance according to user candidate**********')
+    finance_rslt = db2_finance.get_item_by_username('SteveCarsey@foxairmail.com')
+    #print(finance_rslt)
+    for row in finance_rslt:
+        #print(row['checkaccount'])
+        quota_rslt = db3_accountquota.get_one_item(row['checkaccount'])
+        print(quota_rslt)
+
+    print('asin_task', asin_task)
+    asin_products = []
+    for key in asin_task.keys():
+        # print(key)
+        product = db4_productinfo.get_one_item(key)
+        # print(product)
+        asin_products.append(product)
 
     db1_accountinfo.close()
     del db1_accountinfo
-    db2_accountquota.close()
-    del db2_accountquota
+    db2_finance.close()
+    del db2_finance
     pass
 
 
