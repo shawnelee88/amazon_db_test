@@ -913,7 +913,7 @@ class ordertask_db(object):
     sql_update_ordertask_num_dict = ("UPDATE ordertask SET num=%s WHERE username=%s;")
     sql_update_ordertask_order_date_dict = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
     sql_get_info = ("SELECT * FROM ordertask;")
-
+    order_task_fields = ['ordertaskid', 'username', 'asin', 'num', 'order_date']
     def __init__(self):
         try:
             self.cnx = mysql.connector.connect(**config)
