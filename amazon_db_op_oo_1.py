@@ -1096,7 +1096,100 @@ def dbg_finance():
 
     db.close()
     del db
+
+def dbg_accountquota():
+    first_time = 0
+    db = amazon_db()
+    db.open()
+    rslt = db.accountquota_get_item()
+    for row in rslt:
+        print(row)
+    if first_time == 1:
+        db.accountquota_add_item('TDLan-549',200,800,10000)
+        db.accountquota_add_item('BOALI-848', 200, 800, 10000)
+    else:
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+        db.accountquota_update_mquota('TDLan-549',400)
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+        db.accountquota_update_wquota('TDLan-549',500)
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+        db.accountquota_update_yquota('TDLan-549',20000)
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+    db.close()
+    del db
+
+
+def dbg_productinfo():
+    first_time = 0
+    db = amazon_db()
+    db.open()
+    rslt = db.productinfo_get_item()
+    for row in rslt:
+        print(row)
+    if first_time == 1:
+        db.productinfo_add_item('B077RYNF82','Electronics','89.99','89.99', 'wireless bluetooth earbud', 'STERIO')
+        db.productinfo_add_item('B07439HNFT', 'Electronics', '94.99', '94.99', 'dash cam 4k', 'STERIO')
+    else:
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.productinfo_update_department('B077RYNF82','telecom')
+        db.productinfo_update_department('B07439HNFT', 'unicorn')
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.productinfo_update_busybox_price('B077RYNF82','100.00')
+        db.productinfo_update_busybox_price('B07439HNFT', '120.00')
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.productinfo_update_busybox_price('B077RYNF82', '110.00')
+        db.productinfo_update_busybox_price('B07439HNFT', '130.00')
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.productinfo_update_keyword('B077RYNF82', 'asdfasdfasdfasdf')
+        db.productinfo_update_keyword('B07439HNFT', 'oiuiuououou')
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.productinfo_update_brand('B077RYNF82', 'huawei')
+        db.productinfo_update_brand('B07439HNFT', 'HIK')
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+    db.close()
+    del db
+
+
+def dbg_ordertask():
+    db = amazon_db()
+    db.open()
+    rslt = db.ordertask_get_item()
+    for row in rslt:
+        print(row)
+    db.ordertask_add_item('lee','B077RYNF82',10)
+    db.ordertask_add_item('lee', 'B07439HNFT', 20)
+    db.ordertask_add_item('AnnieLee@foxairmail.com', 'B07439HNFT', 30)
+    db.ordertask_add_item('BingTan89@foxairmail.com', 'B07439HNFT', 40)
+    db.ordertask_add_item('MineralDick@foxairmail.com', 'B077RYNF82', 50)
+    rslt = db.ordertask_get_item()
+    for row in rslt:
+        print(row)
+    db.close()
+    del db
 #dbg_accountinfo()
 #dbg_shipaddr()
-dbg_finance()
+#dbg_finance()
+#dbg_accountquota()
+#dbg_productinfo()
+#dbg_ordertask()
 
