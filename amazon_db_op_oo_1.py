@@ -1186,10 +1186,55 @@ def dbg_ordertask():
         print(row)
     db.close()
     del db
+
+
+#select candidates which meets some requirements
+#min_val:each buyer should spend minimum money
+#buyer_interval:lastbuy time should be more than this, in hrs
+def get_available_user(min_val, buyer_interval, **asin_task):
+    #get available users according to buyer_interval, should not use users which have purchased recently
+    db = amazon_db()
+    db.open()
+    accountinfo_rslt = db.accountinfo_get_item_by_lastbuy(buyer_interval)
+    print('**********get users according to buyer_interval**********')
+    for row in accountinfo_rslt:
+        print(row['username'])
+
+    # get users' shipaddress
+    shipaddr_result = db.shipaddress_get_item_by_username('MarvinDickerson987@foxairmail.com')
+    print('\n**********get shipaddreess**********')
+    print(shipaddr_result)
+
+
+    #get bank-account those users are using, check if quota enough
+    print('\n**********get finance according to user candidate**********')
+    finance_rslt = db.finance_get_item_by_username('SteveCarsey@foxairmail.com')
+    #print(finance_rslt)
+    for row in finance_rslt:
+        #print(row['checkaccount'])
+        quota_rslt = db.accountquota_get_one_item(row['checkaccount'])
+        print(quota_rslt)
+
+    print('asin_task', asin_task)
+    asin_products = []
+    for key in asin_task.keys():
+        # print(key)
+        product = db.productinfo_get_one_item(key)
+        # print(product)
+        asin_products.append(product)
+
+    db.close()
+    del db
+
+
+
 #dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
 #dbg_productinfo()
 #dbg_ordertask()
+get_available_user(100, 24, **{'B077RYNF82':10, 'B07439HNFT':20})
 
+if __name__=='__main__':
+    pass
