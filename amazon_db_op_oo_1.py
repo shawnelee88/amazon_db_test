@@ -981,6 +981,49 @@ def dbg_accountinfo():
     db.close()
     del db
 
+def dbg_shipaddr():
+    first_time = 0
+    db = amazon_db()
+    db.open()
+    rslt = db.shipaddress_get_item()
+    for row in rslt:
+        print(row)
+
+    if first_time == 1:
+        db.shipaddress_add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
+    else:
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+
+        db.shipaddress_update_address('MarvinDickerson987@foxairmail.com', 'jiangnanguojicheng')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+        db.shipaddress_update_city('MarvinDickerson987@foxairmail.com', 'YW')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+        db.shipaddress_update_fullname('MarvinDickerson987@foxairmail.com', 'leanardo')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+        db.shipaddress_update_phonenumber('MarvinDickerson987@foxairmail.com', '987987')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+        db.shipaddress_update_postalcode('MarvinDickerson987@foxairmail.com', '009990')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+        db.shipaddress_update_state('MarvinDickerson987@foxairmail.com', 'JH')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+
+    db.close()
+    del db
 #dbg_accountinfo()
+dbg_shipaddr()
 
 
