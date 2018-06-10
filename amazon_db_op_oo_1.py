@@ -271,9 +271,9 @@ class amazon_db(object):
     def accountinfo_get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_get_shipaddr_all)
+        self.cursor.execute(amazon_db.sql_get_accountinfo_all)
         result = self.cursor.fetchall()
-        print(result)
+        #print(result)
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return result
@@ -315,7 +315,7 @@ class amazon_db(object):
         #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_createdate_tuple, update_dll)
+        self.cursor.execute(amazon_db.sql_update_accountinfo_createdate_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -346,9 +346,9 @@ class amazon_db(object):
     def accountinfo_update_in_use(self, username, in_use):
         update_dll = {}
         update_dll['username'] = username
-        if in_use:
-            update_dll['in_use'] = in_use
-        print(update_dll)
+        #if in_use:
+        update_dll['in_use'] = in_use
+        #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
         self.cursor.execute(amazon_db.sql_update_accountinfo_in_use_dict, update_dll)
@@ -358,9 +358,9 @@ class amazon_db(object):
     def accountinfo_update_alive(self, username, alive):
         update_dll = {}
         update_dll['username'] = username
-        if alive:
-            update_dll['alive'] = alive
-        print(update_dll)
+        #if alive:
+        update_dll['alive'] = alive
+        #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
         self.cursor.execute(amazon_db.sql_update_accountinfo_alive_dict, update_dll)
@@ -372,7 +372,7 @@ class amazon_db(object):
         update_dll['username'] = username
         if cookies:
             update_dll['cookies'] = cookies
-        print(update_dll)
+        #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
         self.cursor.execute(amazon_db.sql_update_accountinfo_cookies_dict, update_dll)
@@ -923,8 +923,64 @@ class amazon_db(object):
     def close(self):
         self.cnx.close()
 
-db_test = amazon_db()
-print(db_test.sql_rd_lock)
-print(db_test.sql_wr_lock)
-print(db_test.sql_rd_lock_all)
-print(db_test.sql_wr_lock_all)
+
+
+def dbg_accountinfo():
+    first_time = 0
+    db = amazon_db()
+    db.open()
+    rslt = db.accountinfo_get_item()
+    for row in rslt:
+        print(row)
+
+    if first_time == 1:
+        db.accountinfo_add_item('lee', '456456')
+    else:
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+        db.accountinfo_update_passwd('lee', '9999999')
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_cookies('lee', '567567567567')
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_alive('lee', 0)
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_createdate('lee', datetime.now())
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_logindate('lee', datetime.now())
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_lastbuy('lee', datetime.now())
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_in_use('lee', 0)
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+
+        db.accountinfo_update_MAC('lee', 'ff-ff-ff-ff-ff-ff')
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+    db.close()
+    del db
+
+#dbg_accountinfo()
+
+
