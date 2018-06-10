@@ -1023,7 +1023,80 @@ def dbg_shipaddr():
 
     db.close()
     del db
-#dbg_accountinfo()
-dbg_shipaddr()
 
+def dbg_finance():
+    first_time = 0
+    db = amazon_db()
+    db.open()
+    rslt = db.finance_get_item()
+    for row in rslt:
+        print(row)
+
+    if first_time == 1:
+        db.finance_add_item('SteveCarsey@foxairmail.com','George Troni','4859103482757156',
+                 '04','2022','TDLan-549','George Troni','6 redglobe ct','29681-3615',
+                 'simpsonville','SC','8645612655')
+        db.finance_add_item('AnnieLee@foxairmail.com', 'Annie Lee', '4859109471703325',
+                    '04', '2022', 'TDLan-549', 'Annie Lee', '193 central st. ste W102', '03051',
+                    'nashua', 'NH', '3054146488')
+        db.finance_add_item('BingTan89@foxairmail.com', 'Bing Tan', '4859101936347160',
+                    '04', '2022', 'TDLan-549', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3D', '48910',
+                    'Lansing', 'MI', '6508890052')
+        db.finance_add_item('MineralDick@foxairmail.com', 'Mineral Dick', '4859107167920401',
+                    '04', '2022', 'TDLan-549', 'Mineral Dick', '193 central st. Apt W253', '03051',
+                    'nashua', 'NH', '4242237285')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+    else:
+        db.finance_update_state('SteveCarsey@foxairmail.com', 'JH')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_postalcode('SteveCarsey@foxairmail.com', '089098')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_fullname('SteveCarsey@foxairmail.com', 'leanardo')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_phonenumber('SteveCarsey@foxairmail.com', '987688778686')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_city('SteveCarsey@foxairmail.com', 'YW')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_address('SteveCarsey@foxairmail.com', 'JNGJC')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_ccmonth('SteveCarsey@foxairmail.com', '06')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_ccnumber('SteveCarsey@foxairmail.com', '09090909')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_ccyear('SteveCarsey@foxairmail.com', '2020')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_checkaccount('SteveCarsey@foxairmail.com', 'lee99shawne')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+        db.finance_update_nameoncard('SteveCarsey@foxairmail.com', 'XIAOMIN')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+
+    db.close()
+    del db
+#dbg_accountinfo()
+#dbg_shipaddr()
+dbg_finance()
 
