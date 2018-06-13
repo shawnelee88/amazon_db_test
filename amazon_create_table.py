@@ -40,8 +40,8 @@ TABLES['accountinfo'] = (
     " `createdate` DATETIME,"
     " `logindate` DATETIME,"
     " `lastbuy` DATETIME,"
-    " `in_use` CHAR(1),"
-    " `alive` CHAR(1)," 
+    " `in_use` INT UNSIGNED DEFAULT 0,"
+    " `alive` INT UNSIGNED DEFAULT 1,"
     " `MAC` VARCHAR(20),"
     " PRIMARY KEY (`userid`)"
     ") ENGINE=InnoDB")
