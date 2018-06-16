@@ -259,7 +259,7 @@ class amazon_db(object):
         add_dll['in_use'] = in_use
         add_dll['alive'] = alive
         add_dll['MAC'] = MAC
-        #print(add_dll)
+        print(add_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
         self.cursor.execute(amazon_db.sql_add_accountinfo_dict, add_dll)
@@ -291,7 +291,7 @@ class amazon_db(object):
             item = dict(zip(amazon_db.accountinfo_fields, row))
             #print(item)
             candidate_users.append(item)
-        print(candidate_users)
+        #print(candidate_users)
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return candidate_users
@@ -428,7 +428,7 @@ class amazon_db(object):
 
         self.cursor.execute(amazon_db.sql_get_shipaddress_by_username_dict, query)
         result = self.cursor.fetchall()
-        print(result)
+        #print(result)
         candidate_shipaddr = []
         for row in result:
             item = dict(zip(amazon_db.shipaddress_fields, row))
@@ -555,16 +555,20 @@ class amazon_db(object):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.FINANCE])
         self.cursor.execute(amazon_db.sql_get_finance_by_username_tuple, (username,))
-        result = self.cursor.fetchall()
-        # print(result)
-        candidate_finance = []
-        for row in result:
-            item = dict(zip(amazon_db.finance_fields, row))
-            candidate_finance.append(item)
-        # print(candidate_finance)
+        # result = self.cursor.fetchall()
+        # #print(result)
+        # candidate_finance = []
+        # for row in result:
+        #     item = dict(zip(amazon_db.finance_fields, row))
+        #     candidate_finance.append(item)
+        candidate_finance = self.cursor.fetchone()
+        if candidate_finance:
+            candidate_finance = dict(zip(amazon_db.finance_fields, candidate_finance))
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return candidate_finance
+
+        candidate_finance = self.cursor.fetchone()
 
     def finance_update_nameoncard(self, username, nameoncard):
         update_dll = {}
@@ -738,11 +742,14 @@ class amazon_db(object):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.ACCOUNTQUOTA])
         self.cursor.execute(amazon_db.sql_get_accountquota_by_account_dict, query)
-        result = self.cursor.fetchall()
-        quota_rslt = []
-        for row in result:
-            item = dict(zip(amazon_db.accountquota_fields, row))
-            quota_rslt.append(item)
+        # result = self.cursor.fetchall()
+        # quota_rslt = []
+        # for row in result:
+        #     item = dict(zip(amazon_db.accountquota_fields, row))
+        #     quota_rslt.append(item)
+        result = self.cursor.fetchone()
+        if result:
+            quota_rslt = dict(zip(amazon_db.accountquota_fields, result))
         #print(quota_rslt)
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
@@ -817,7 +824,7 @@ class amazon_db(object):
     def productinfo_get_one_item(self, asin):
         query = {}
         query['asin'] = asin
-        print('query', query)
+        #print('query', query)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.PRODUCTINFO])
         self.cursor.execute(amazon_db.sql_get_productinfo_by_asin_dict, query)
@@ -926,7 +933,7 @@ class amazon_db(object):
 
 
 def dbg_accountinfo():
-    first_time = 0
+    first_time = 1
     db = amazon_db()
     db.open()
     rslt = db.accountinfo_get_item()
@@ -934,7 +941,12 @@ def dbg_accountinfo():
         print(row)
 
     if first_time == 1:
-        db.accountinfo_add_item('lee', '456456')
+        #db.accountinfo_add_item('MarvinDickerson987@foxairmail.com', 'MarvinDickerson987')
+        #db.accountinfo_add_item('AdamBright@foxairmail.com', '6564kkngbb')
+        #db.accountinfo_add_item('DamaoWang@foxairmail.com', 'jyenbk85')
+        #db.accountinfo_add_item('shawnelee88@gmail.com', 'leo88')
+        db.accountinfo_add_item('shawnelee881@gmail.com', 'leo88')
+        db.accountinfo_add_item('shawnelee882@gmail.com', 'leo88')
     else:
         rslt = db.accountinfo_get_item()
         for row in rslt:
@@ -982,7 +994,7 @@ def dbg_accountinfo():
     del db
 
 def dbg_shipaddr():
-    first_time = 0
+    first_time = 1
     db = amazon_db()
     db.open()
     rslt = db.shipaddress_get_item()
@@ -990,7 +1002,12 @@ def dbg_shipaddr():
         print(row)
 
     if first_time == 1:
-        db.shipaddress_add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
+        #db.shipaddress_add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
+        #db.shipaddress_add_item('AdamBright@foxairmail.com', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3B', '48910', 'Lansing', 'MI', '6508890052')
+        #db.shipaddress_add_item('DamaoWang@foxairmail.com', 'Zhiyuan Lan', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
+        db.shipaddress_add_item('shawnelee88@gmail.com', 'Zhiyuan Lan', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
+        db.shipaddress_add_item('shawnelee881@gmail.com', 'shawnelee881', '4 bud way, ste 16-201', '03063', 'nashua ','NH', '6035241562')
+        db.shipaddress_add_item('shawnelee882@gmail.com', 'shawnelee882', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
     else:
         rslt = db.shipaddress_get_item()
         for row in rslt:
@@ -1025,7 +1042,7 @@ def dbg_shipaddr():
     del db
 
 def dbg_finance():
-    first_time = 0
+    first_time = 1
     db = amazon_db()
     db.open()
     rslt = db.finance_get_item()
@@ -1033,16 +1050,19 @@ def dbg_finance():
         print(row)
 
     if first_time == 1:
-        db.finance_add_item('SteveCarsey@foxairmail.com','George Troni','4859103482757156',
-                 '04','2022','TDLan-549','George Troni','6 redglobe ct','29681-3615',
-                 'simpsonville','SC','8645612655')
-        db.finance_add_item('AnnieLee@foxairmail.com', 'Annie Lee', '4859109471703325',
-                    '04', '2022', 'TDLan-549', 'Annie Lee', '193 central st. ste W102', '03051',
-                    'nashua', 'NH', '3054146488')
-        db.finance_add_item('BingTan89@foxairmail.com', 'Bing Tan', '4859101936347160',
-                    '04', '2022', 'TDLan-549', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3D', '48910',
-                    'Lansing', 'MI', '6508890052')
-        db.finance_add_item('MineralDick@foxairmail.com', 'Mineral Dick', '4859107167920401',
+        # db.finance_add_item('MarvinDickerson987@foxairmail.com', 'Marvin Dickerson','4859106480044568',
+        #                     '04','2022','TDLan-549','Marvin Dickerson','6 redglobe ct','29681-3615',
+        #                     'simpsonville','SC','8645612655')
+        # db.finance_add_item('AdamBright@foxairmail.com','Adam Bright','4859105152861630',
+        #                     '04','2022','BOALI-848','Adam Bright','6614 Aden Ln, Apt 1','78739',
+        #                     'Austin','TX','5756026422')
+        db.finance_add_item('shawnelee88@gmail.com', 'Annie Lee', '4859109471703325',
+                            '04', '2022', 'TDLan-549', 'Annie Lee', '193 central st. ste W102', '03051',
+                            'nashua', 'NH', '3054146488')
+        db.finance_add_item('shawnelee881@gmail.com', 'Bing Tan', '4859101936347160',
+                             '04', '2022', 'TDLan-549', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3D', '48910',
+                            'Lansing', 'MI', '6508890052')
+        db.finance_add_item('shawnelee882@gmail.com', 'Mineral Dick', '4859107167920401',
                     '04', '2022', 'TDLan-549', 'Mineral Dick', '193 central st. Apt W253', '03051',
                     'nashua', 'NH', '4242237285')
         rslt = db.finance_get_item()
@@ -1098,7 +1118,7 @@ def dbg_finance():
     del db
 
 def dbg_accountquota():
-    first_time = 0
+    first_time = 1
     db = amazon_db()
     db.open()
     rslt = db.accountquota_get_item()
@@ -1128,7 +1148,7 @@ def dbg_accountquota():
 
 
 def dbg_productinfo():
-    first_time = 0
+    first_time = 1
     db = amazon_db()
     db.open()
     rslt = db.productinfo_get_item()
@@ -1195,33 +1215,86 @@ def get_available_user(min_val, buyer_interval, **asin_task):
     #get available users according to buyer_interval, should not use users which have purchased recently
     db = amazon_db()
     db.open()
+    all_candidates = []
+
+    asin_list = []
+    asin_qnty_list = []
+    asin_price_list = []
+    # price_avg = 0
+    for key, val in asin_task.items():
+        product = db.productinfo_get_one_item(key)
+        asin_list.append(key)
+        asin_qnty_list.append(val)
+        asin_price_list.append(product["order_price"])
+        # price_avg += product['order_price']
+        #print(product)
+
+
+    # print(price_avg)
+    for i in range(len(asin_list)):
+        print(asin_list[i], asin_price_list[i], asin_qnty_list[i])
+
+    # qnty_avg = min_val // price_avg
+    # min_qnty = min(asin_qnty_list)
+    #
+    # print(len(asin_list), qnty_avg, qnty_avg*price_avg)
+    # if qnty_avg*price_avg == min_val:
+    #     pass
+    # else:
+    #     total_val = qnty_avg*price_avg
+    #     for item in asin_price_list:
+    #         total_val += item
+    #         if total_val >= min_val:
+    #             break;
+    #     print(total_val)
+
     accountinfo_rslt = db.accountinfo_get_item_by_lastbuy(buyer_interval)
     print('**********get users according to buyer_interval**********')
     for row in accountinfo_rslt:
-        print(row['username'])
+        # print(row['username'])
+        candidate = {}
+        candidate["accountinfo"] = row
+        # get users' shipaddress
+        shipaddr_result = db.shipaddress_get_item_by_username(row['username'])
+        # print('\n**********get shipaddreess**********')
+        # for row in shipaddr_result:
+        #      print(row['address'])
+        candidate["shipaddress"] = shipaddr_result
 
-    # get users' shipaddress
-    shipaddr_result = db.shipaddress_get_item_by_username('MarvinDickerson987@foxairmail.com')
-    print('\n**********get shipaddreess**********')
-    print(shipaddr_result)
+        # get bank-account those users are using, check if quota enough
+        # print('\n**********get finance according to user candidate**********')
+        finance_rslt = db.finance_get_item_by_username(row['username'])
+        candidate['finance'] = finance_rslt
+        if finance_rslt == None:
+            print('No Finance Found:', row['username'])
+            candidate['accountquota'] = None
+        else:
+            quota_rslt = db.accountquota_get_one_item(finance_rslt['checkaccount'])
+            candidate['accountquota'] = quota_rslt
+            if quota_rslt['mquota'] < min_val:
+                continue
+            val_per_user = 0
+            asin_per_user = []
+            for i in range(len(asin_list)):
+                if asin_qnty_list[i]:
+                    val_per_user += asin_price_list[i]
+                    asin_per_user.append(asin_list[i])
+                    asin_qnty_list[i] -= 1
+                    if val_per_user >= min_val and val_per_user < quota_rslt['mquota']:
+                        break
 
 
-    #get bank-account those users are using, check if quota enough
-    print('\n**********get finance according to user candidate**********')
-    finance_rslt = db.finance_get_item_by_username('SteveCarsey@foxairmail.com')
-    #print(finance_rslt)
-    for row in finance_rslt:
-        #print(row['checkaccount'])
-        quota_rslt = db.accountquota_get_one_item(row['checkaccount'])
-        print(quota_rslt)
+            print(asin_per_user)
+            all_candidates.append(candidate)
 
-    print('asin_task', asin_task)
-    asin_products = []
-    for key in asin_task.keys():
-        # print(key)
-        product = db.productinfo_get_one_item(key)
-        # print(product)
-        asin_products.append(product)
+
+
+    for candidate in all_candidates:
+        for tbl, info in candidate.items():
+            print('tbl:', tbl, ',info:', info)
+
+
+
 
     db.close()
     del db
@@ -1234,7 +1307,7 @@ def get_available_user(min_val, buyer_interval, **asin_task):
 #dbg_accountquota()
 #dbg_productinfo()
 #dbg_ordertask()
-get_available_user(100, 24, **{'B077RYNF82':10, 'B07439HNFT':20})
+get_available_user(150, 24, **{'B077RYNF82':2, 'B07439HNFT':1})
 
 if __name__=='__main__':
     pass
