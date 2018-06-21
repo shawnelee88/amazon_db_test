@@ -164,21 +164,12 @@ class amazon_db(object):
     sql_add_productinfo_tuple = ("INSERT INTO productinfo"
                                  "(asin, department, busybox_price, order_price, keyword, brand)"
                                  "VALUES (%s,%s,%s,%s,%s,%s)")
-    sql_update_productinfo_department_tuple = ("UPDATE productinfo SET department=%s WHERE asin=%s;")
-    sql_update_productinfo_busybox_price_tuple = ("UPDATE productinfo SET busybox_price=%s WHERE asin=%s;")
-    sql_update_productinfo_order_price_tuple = ("UPDATE productinfo SET order_price=%s WHERE asin=%s;")
-    sql_update_productinfo_keyword_tuple = ("UPDATE productinfo SET keyword=%s WHERE asin=%s;")
-    sql_update_productinfo_brand_tuple = ("UPDATE productinfo SET brand=%s WHERE asin=%s;")
-
+    sql_update_productinfo_tuple = ("UPDATE productinfo SET department=%s, busybox_price=%s, order_price=%s, keyword=%s, brand=%s WHERE asin=%s;")
     # args in dict form
     sql_add_productinfo_dict = ("INSERT INTO productinfo"
                                 "(asin, department, busybox_price, order_price, keyword, brand)"
                                 "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s)")
-    sql_update_productinfo_department_dict = ("UPDATE productinfo SET department=%(department)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_busybox_price_dict = ("UPDATE productinfo SET busybox_price=%(busybox_price)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_order_price_dict = ("UPDATE productinfo SET order_price=%(order_price)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_keyword_dict = ("UPDATE productinfo SET keyword=%(keyword)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_brand_dict = ("UPDATE productinfo SET brand=%(brand)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_dict = ("UPDATE productinfo SET department=%(department)s, busybox_price=%(busybox_price)s, order_price=%(order_price)s, keyword=%(keyword)s, brand=%(brand)s WHERE asin=%(asin)s;")
     sql_get_productinfo_all = ("SELECT * FROM productinfo;")
     sql_get_productinfo_by_asin_tuple = ("SELECT * FROM productinfo WHERE asin=%s;")
     sql_get_productinfo_by_asin_dict = ("SELECT * FROM productinfo WHERE asin=%(asin)s;")
@@ -810,7 +801,26 @@ class amazon_db(object):
         self.cnx.commit()
         self.cursor.close()
         return
-
+    def productinfo_update_item(self, asin, department, busybox_price, order_price, keyword, brand):
+        update_dll = {}
+        update_dll['asin'] = asin
+        if department:
+            update_dll['department'] = department
+        if busybox_price:
+            update_dll['busybox_price'] = busybox_price
+        if order_price:
+            update_dll['order_price'] = order_price
+        if keyword:
+            update_dll['keyword'] = keyword
+        if brand:
+            update_dll['brand'] = brand
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
+        self.cursor.execute(amazon_db.sql_update_productinfo_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def productinfo_get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.PRODUCTINFO])
@@ -837,71 +847,6 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return product_rslt
-    def productinfo_update_department(self, asin, department):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if department:
-            update_dll['department'] = department
-        # print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_department_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def productinfo_update_busybox_price(self, asin, busybox_price):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if busybox_price:
-            update_dll['busybox_price'] = busybox_price
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_busybox_price_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def productinfo_update_order_price(self, asin, order_price):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if order_price:
-            update_dll['order_price'] = order_price
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_order_price_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def productinfo_update_keyword(self, asin, keyword):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if keyword:
-            update_dll['keyword'] = keyword
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_keyword_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def productinfo_update_brand(self, asin, brand):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if brand:
-            update_dll['brand'] = brand
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_brand_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
 
     def ordertask_add_item(self, username,asin,num,order_date=datetime.now()):
         add_dll = {}
@@ -1148,7 +1093,7 @@ def dbg_accountquota():
 
 
 def dbg_productinfo():
-    first_time = 1
+    first_time = 0
     db = amazon_db()
     db.open()
     rslt = db.productinfo_get_item()
@@ -1161,29 +1106,7 @@ def dbg_productinfo():
         rslt = db.productinfo_get_item()
         for row in rslt:
             print(row)
-        db.productinfo_update_department('B077RYNF82','telecom')
-        db.productinfo_update_department('B07439HNFT', 'unicorn')
-        rslt = db.productinfo_get_item()
-        for row in rslt:
-            print(row)
-        db.productinfo_update_busybox_price('B077RYNF82','100.00')
-        db.productinfo_update_busybox_price('B07439HNFT', '120.00')
-        rslt = db.productinfo_get_item()
-        for row in rslt:
-            print(row)
-        db.productinfo_update_busybox_price('B077RYNF82', '110.00')
-        db.productinfo_update_busybox_price('B07439HNFT', '130.00')
-        rslt = db.productinfo_get_item()
-        for row in rslt:
-            print(row)
-        db.productinfo_update_keyword('B077RYNF82', 'asdfasdfasdfasdf')
-        db.productinfo_update_keyword('B07439HNFT', 'oiuiuououou')
-        rslt = db.productinfo_get_item()
-        for row in rslt:
-            print(row)
-        db.productinfo_update_brand('B077RYNF82', 'huawei')
-        db.productinfo_update_brand('B07439HNFT', 'HIK')
-        rslt = db.productinfo_get_item()
+        db.productinfo_update_item('B07439HNFT', 'Computer', '77.68', '88.67', 'HD cam', 'xiaomi')
         for row in rslt:
             print(row)
     db.close()
@@ -1305,9 +1228,9 @@ def get_available_user(min_val, buyer_interval, **asin_task):
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
-#dbg_productinfo()
+dbg_productinfo()
 #dbg_ordertask()
-get_available_user(150, 24, **{'B077RYNF82':2, 'B07439HNFT':1})
+#get_available_user(150, 24, **{'B077RYNF82':2, 'B07439HNFT':1})
 
 if __name__=='__main__':
     pass
