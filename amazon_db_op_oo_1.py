@@ -54,27 +54,13 @@ class amazon_db(object):
     sql_add_accountinfo_tuple = ("INSERT INTO accountinfo"
                           "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC)"
                           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);")
-    sql_update_accountinfo_pw_tuple = ("UPDATE accountinfo SET password=%s WHERE username=%s;")
-    sql_update_accountinfo_cookie_tuple = ("UPDATE accountinfo SET cookies=%s WHERE username=%s;")
-    sql_update_accountinfo_createdate_tuple = ("UPDATE accountinfo SET createdate=%s WHERE username=%s;")
-    sql_update_accountinfo_logindate_tuple = ("UPDATE accountinfo SET logindate=%s WHERE username=%s;")
-    sql_update_accountinfo_lastbuy_tuple = ("UPDATE accountinfo SET lastbuy=%s WHERE username=%s;")
-    sql_update_accountinfo_in_use_tuple = ("UPDATE accountinfo SET in_use=%s WHERE username=%s;")
-    sql_update_accountinfo_alive_tuple = ("UPDATE accountinfo SET alive=%s WHERE username=%s;")
-    sql_update_accountinfo_MAC_tuple = ("UPDATE accountinfo SET MAC=%s WHERE username=%s;")
+    sql_update_accountinfo_tuple = ("UPDATE accountinfo SET password=%s, cookies=%s, createdate=%s, logindate=%s, lastbuy=%s, in_use=%s, alive=%s, MAC=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_accountinfo_dict = ("INSERT INTO accountinfo"
                          "(username, password, cookies, createdate, logindate, lastbuy, alive, MAC)"
-                         "VALUES (%(username)s, %(passwd)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(alive)s, %(MAC)s);")
-    sql_update_accountinfo_pw_dict = ("UPDATE accountinfo SET password=%(passwd)s WHERE username=%(username)s;")
-    sql_update_accountinfo_cookies_dict = ("UPDATE accountinfo SET cookies=%(cookies)s WHERE username=%(username)s;")
-    sql_update_accountinfo_createdate_dict = ("UPDATE accountinfo SET createdate=%(createdate)s WHERE username=%(username)s;")
-    sql_update_accountinfo_logindate_dict = ("UPDATE accountinfo SET logindate=%(logindate)s WHERE username=%(username)s;")
-    sql_update_accountinfo_lastbuy_dict = ("UPDATE accountinfo SET lastbuy=%(lastbuy)s WHERE username=%(username)s;")
-    sql_update_accountinfo_in_use_dict = ("UPDATE accountinfo SET in_use=%(in_use)s WHERE username=%(username)s;")
-    sql_update_accountinfo_alive_dict = ("UPDATE accountinfo SET alive=%(alive)s WHERE username=%(username)s;")
-    sql_update_accountinfo_MAC_dict = ("UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
+                         "VALUES (%(username)s, %(password)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(alive)s, %(MAC)s);")
+    sql_update_accountinfo_dict = ("UPDATE accountinfo SET password=%(password)s, cookies=%(cookies)s, createdate=%(createdate)s, logindate=%(logindate)s, lastbuy=%(lastbuy)s, in_use=%(in_use)s, alive=%(alive)s, MAC=%(MAC)s WHERE username=%(username)s;")
 
     sql_get_accountinfo_all = ("SELECT * FROM accountinfo;")
     sql_get_accountinfo_by_lastbuy_tuple = ("SELECT * FROM accountinfo WHERE lastbuy < %s AND in_use=0;")
@@ -239,10 +225,10 @@ class amazon_db(object):
         except mysql.connector.Error as err:
             print('connect err:', err)
         return
-    def accountinfo_add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(), lastbuy=datetime(1997,1,1), in_use=0, alive=1, cookies=None, MAC=None):
+    def accountinfo_add_item(self, username, password, cookies=None, createdate=datetime.now(), logindate=datetime.now(), lastbuy=datetime(1997,1,1), in_use=0, alive=1, MAC='00-00-00-00-00-00'):
         add_dll = {}
         add_dll['username'] = username
-        add_dll['passwd'] = passwd
+        add_dll['password'] = password
         add_dll['cookies'] = cookies
         add_dll['createdate'] = createdate
         add_dll['logindate'] = logindate
@@ -286,99 +272,21 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return candidate_users
-    def accountinfo_update_passwd(self, username, passwd):
+    def accountinfo_update_item(self, username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC):
         update_dll = {}
         update_dll['username'] = username
-        if passwd:
-            update_dll['passwd'] = passwd
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_pw_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_createdate(self, username, createdate):
-        update_dll = {}
-        update_dll['username'] = username
-        if createdate:
-            update_dll['createdate'] = createdate
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_createdate_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_logindate(self, username, logindate):
-        update_dll = {}
-        update_dll['username'] = username
-        if logindate:
-            update_dll['logindate'] = logindate
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_logindate_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_lastbuy(self, username, lastbuy):
-        update_dll = {}
-        update_dll['username'] = username
-        if lastbuy:
-            update_dll['lastbuy'] = lastbuy
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_lastbuy_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_in_use(self, username, in_use):
-        update_dll = {}
-        update_dll['username'] = username
-        #if in_use:
+        update_dll['password'] = password
+        update_dll['createdate'] = createdate
+        update_dll['logindate'] = logindate
+        update_dll['lastbuy'] = lastbuy
         update_dll['in_use'] = in_use
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_in_use_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_alive(self, username, alive):
-        update_dll = {}
-        update_dll['username'] = username
-        #if alive:
         update_dll['alive'] = alive
+        update_dll['cookies'] = cookies
+        update_dll['MAC'] = MAC
         #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_alive_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_cookies(self, username, cookies):
-        update_dll = {}
-        update_dll['username'] = username
-        if cookies:
-            update_dll['cookies'] = cookies
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_cookies_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def accountinfo_update_MAC(self, username, MAC):
-        update_dll = {}
-        update_dll['username'] = username
-        if MAC:
-            update_dll['MAC'] = MAC
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
-        self.cursor.execute(amazon_db.sql_update_accountinfo_MAC_dict, update_dll)
+        self.cursor.execute(amazon_db.sql_update_accountinfo_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -878,7 +786,7 @@ class amazon_db(object):
 
 
 def dbg_accountinfo():
-    first_time = 1
+    first_time = 0
     db = amazon_db()
     db.open()
     rslt = db.accountinfo_get_item()
@@ -896,42 +804,8 @@ def dbg_accountinfo():
         rslt = db.accountinfo_get_item()
         for row in rslt:
             print(row)
-        db.accountinfo_update_passwd('lee', '9999999')
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
 
-        db.accountinfo_update_cookies('lee', '567567567567')
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_alive('lee', 0)
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_createdate('lee', datetime.now())
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_logindate('lee', datetime.now())
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_lastbuy('lee', datetime.now())
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_in_use('lee', 0)
-        rslt = db.accountinfo_get_item()
-        for row in rslt:
-            print(row)
-
-        db.accountinfo_update_MAC('lee', 'ff-ff-ff-ff-ff-ff')
+        db.accountinfo_update_item('shawnelee882@gmail.com', '9999999', None, datetime.now(), datetime.now(), datetime.now(), 1, 1, None)
         rslt = db.accountinfo_get_item()
         for row in rslt:
             print(row)
@@ -1224,11 +1098,11 @@ def get_available_user(min_val, buyer_interval, **asin_task):
 
 
 
-#dbg_accountinfo()
+dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
-dbg_productinfo()
+#dbg_productinfo()
 #dbg_ordertask()
 #get_available_user(150, 24, **{'B077RYNF82':2, 'B07439HNFT':1})
 
