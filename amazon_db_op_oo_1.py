@@ -65,7 +65,8 @@ class amazon_db(object):
     sql_get_accountinfo_all = ("SELECT * FROM accountinfo;")
     sql_get_accountinfo_by_lastbuy_tuple = ("SELECT * FROM accountinfo WHERE lastbuy < %s AND in_use=0;")
     sql_get_accountinfo_by_lastbuy_dict = ("SELECT * FROM accountinfo WHERE lastbuy < %(lastbuy)s AND in_use=0;")
-
+    sql_del_accountinfo_tuple = ("DELETE FROM accountinfo WHERE username=%s;")
+    sql_del_accountinfo_dict = ("DELETE FROM accountinfo WHERE username=%(username)s;")
     # args in tuple form
     sql_add_shipaddress_tuple = ("INSERT INTO shipaddress "
                               "(username, fullname, address, postalcode, city, state, phonenumber)"
@@ -79,6 +80,8 @@ class amazon_db(object):
     sql_get_shipaddress_all = ("SELECT * FROM shipaddress;")
     sql_get_shipaddress_by_username_tuple = ("SELECT * FROM shipaddress WHERE username=%s;")
     sql_get_shipaddress_by_username_dict = ("SELECT * FROM shipaddress WHERE username=%(username)s;")
+    sql_del_shipaddress_tuple = ("DELETE FROM shipaddress WHERE username=%s;")
+    sql_del_shipaddress_dict = ("DELETE FROM shipaddress WHERE username=%(username)s;")
 
     # args in tuple form
     sql_add_finance_tuple = ("INSERT INTO finance "
@@ -95,21 +98,25 @@ class amazon_db(object):
     sql_get_finance_all = ("SELECT * FROM finance;")
     sql_get_finance_by_username_tuple = ("SELECT * FROM finance WHERE username=%s;")
     sql_get_finance_by_username_dict = ("SELECT * FROM finance WHERE username=%(username)s;")
+    sql_del_finance_tuple = ("DELETE FROM finance WHERE username=%s;")
+    sql_del_finance_dict = ("DELETE FROM finance WHERE username=%(username)s;")
 
     # args in tuple form
-    sql_add_quota_tuple = ("INSERT INTO accountquota"
+    sql_add_accountquota_tuple = ("INSERT INTO accountquota"
                            "(checkaccount,wquota,mquota,yquota)"
                            "VALUES (%s,%s,%s,%s)")
-    sql_update_quota_tuple = ("UPDATE accountquota SET wquota=%s,mquota=%s,yquota=%s WHERE checkaccount=%s;")
+    sql_update_accountquota_tuple = ("UPDATE accountquota SET wquota=%s,mquota=%s,yquota=%s WHERE checkaccount=%s;")
 
     # args in dict form
-    sql_add_quota_dict = ("INSERT INTO accountquota"
+    sql_add_accountquota_dict = ("INSERT INTO accountquota"
                           "(checkaccount,wquota,mquota,yquota)"
                           "VALUES (%(checkaccount)s,%(wquota)s,%(mquota)s,%(yquota)s)")
-    sql_update_quota_dict = ("UPDATE accountquota SET wquota=%(wquota)s,mquota=%(mquota)s,yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
+    sql_update_accountquota_dict = ("UPDATE accountquota SET wquota=%(wquota)s,mquota=%(mquota)s,yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
     sql_get_accountquota_all = ("SELECT * FROM accountquota;")
     sql_get_accountquota_by_account_tuple = ("SELECT * FROM accountquota WHERE checkaccount=%s;")
     sql_get_accountquota_by_account_dict = ("SELECT * FROM accountquota WHERE checkaccount=%(checkaccount)s;")
+    sql_del_accountquota_tuple = ("DELETE FROM accountquota WHERE checkaccount=%s;")
+    sql_del_accountquota_dict = ("DELETE FROM accountquota WHERE checkaccount=%(checkaccount)s;")
 
     # args in tuple form
     sql_add_productinfo_tuple = ("INSERT INTO productinfo"
@@ -124,6 +131,8 @@ class amazon_db(object):
     sql_get_productinfo_all = ("SELECT * FROM productinfo;")
     sql_get_productinfo_by_asin_tuple = ("SELECT * FROM productinfo WHERE asin=%s;")
     sql_get_productinfo_by_asin_dict = ("SELECT * FROM productinfo WHERE asin=%(asin)s;")
+    sql_del_productinfo_tuple = ("DELETE FROM productinfo WHERE asin=%s;")
+    sql_del_productinfo_dict = ("DELETE FROM productinfo WHERE asin=%(asin)s;")
 
     # args in tuple form
     sql_add_ordertask_tuple = ("INSERT INTO ordertask"
@@ -137,6 +146,8 @@ class amazon_db(object):
                               "VALUES (%(username)s,%(asin)s,%(num)s, %(order_date)s)")
     sql_update_ordertask_dict = ("UPDATE ordertask SET asin=%(asin)s, num=%(num)s, order_date=%(order_date)s WHERE username=%(username)s;")
     sql_get_ordertask_all = ("SELECT * FROM ordertask;")
+    # sql_del_ordertask_tuple = ("DELETE FROM ordertask WHERE username=%s;")
+    # sql_del_ordertask_dict = ("DELETE FROM ordertask WHERE username=%(username)s;")
 
     def __init__(self):
         #for rd lock table
@@ -251,7 +262,16 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-
+    def accountinfo_del_item(self, username):
+        update_dll = {}
+        update_dll['username'] = username
+        #print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
+        self.cursor.execute(amazon_db.sql_del_accountinfo_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def shipaddress_add_item(self, username, fullname, address=None, postalcode=None, city=None, state=None, phonenumber=None):
         add_dll = {}
         add_dll['username'] = username
@@ -312,7 +332,16 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-
+    def shipaddress_del_item(self, username):
+        update_dll = {}
+        update_dll['username'] = username
+        #print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
+        self.cursor.execute(amazon_db.sql_del_shipaddress_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def finance_add_item(self, username, nameoncard, ccnumber, ccmonth, ccyear,
                  checkaccount, fullname, address, postalcode,city,state,phonenumber):
         add_dll = {}
@@ -387,7 +416,16 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-
+    def finance_del_item(self, username):
+        update_dll = {}
+        update_dll['username'] = username
+        #print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
+        self.cursor.execute(amazon_db.sql_del_finance_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def accountquota_add_item(self, checkaccount,wquota,mquota,yquota):
         add_dll = {}
         add_dll['checkaccount'] = checkaccount
@@ -397,7 +435,7 @@ class amazon_db(object):
         #print(add_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
-        self.cursor.execute(amazon_db.sql_add_quota_dict, add_dll)
+        self.cursor.execute(amazon_db.sql_add_accountquota_dict, add_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -443,11 +481,20 @@ class amazon_db(object):
         #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
-        self.cursor.execute(amazon_db.sql_update_quota_dict, update_dll)
+        self.cursor.execute(amazon_db.sql_update_accountquota_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-
+    def accountquota_del_item(self, checkaccount):
+        update_dll = {}
+        update_dll['checkaccount'] = checkaccount
+        #print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
+        self.cursor.execute(amazon_db.sql_del_accountquota_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def productinfo_add_item(self, asin, department, busybox_price, order_price, keyword, brand):
         add_dll = {}
         add_dll['asin'] = asin
@@ -464,26 +511,7 @@ class amazon_db(object):
         self.cnx.commit()
         self.cursor.close()
         return
-    def productinfo_update_item(self, asin, department, busybox_price, order_price, keyword, brand):
-        update_dll = {}
-        update_dll['asin'] = asin
-        if department:
-            update_dll['department'] = department
-        if busybox_price:
-            update_dll['busybox_price'] = busybox_price
-        if order_price:
-            update_dll['order_price'] = order_price
-        if keyword:
-            update_dll['keyword'] = keyword
-        if brand:
-            update_dll['brand'] = brand
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
-        self.cursor.execute(amazon_db.sql_update_productinfo_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
+
     def productinfo_get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_rd_lock[DB.PRODUCTINFO])
@@ -510,6 +538,31 @@ class amazon_db(object):
         self.cursor.close()
         return result
 
+    def productinfo_update_item(self, asin, department, busybox_price, order_price, keyword, brand):
+        update_dll = {}
+        update_dll['asin'] = asin
+        update_dll['department'] = department
+        update_dll['busybox_price'] = busybox_price
+        update_dll['order_price'] = order_price
+        update_dll['keyword'] = keyword
+        update_dll['brand'] = brand
+        print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
+        self.cursor.execute(amazon_db.sql_update_productinfo_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
+    def productinfo_del_item(self, asin):
+        update_dll = {}
+        update_dll['asin'] = asin
+        # print(update_dll)
+        self.cursor = self.cnx.cursor()
+        self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
+        self.cursor.execute(amazon_db.sql_del_productinfo_dict, update_dll)
+        self.cursor.execute(self.sql_unlock_all)
+        self.cnx.commit()
+        self.cursor.close()
     def ordertask_add_item(self, username,asin,num,order_date=datetime.now()):
         add_dll = {}
         add_dll['username'] = username
@@ -537,24 +590,28 @@ class amazon_db(object):
     def close(self):
         self.cnx.close()
 
-
+class TEST_OP(IntEnum):
+    ADD = 0
+    UPDATE = 1
+    DEL = 2
+    GET = 3
 
 def dbg_accountinfo():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.accountinfo_get_item()
     for row in rslt:
         print(row)
 
-    if first_time == 1:
+    if op == TEST_OP.ADD:
         #db.accountinfo_add_item('MarvinDickerson987@foxairmail.com', 'MarvinDickerson987')
         #db.accountinfo_add_item('AdamBright@foxairmail.com', '6564kkngbb')
         #db.accountinfo_add_item('DamaoWang@foxairmail.com', 'jyenbk85')
         #db.accountinfo_add_item('shawnelee88@gmail.com', 'leo88')
         db.accountinfo_add_item('shawnelee881@gmail.com', 'leo88')
         db.accountinfo_add_item('shawnelee882@gmail.com', 'leo88')
-    elif first_time == 0:
+    elif op == TEST_OP.UPDATE:
         rslt = db.accountinfo_get_item()
         for row in rslt:
             print(row)
@@ -563,25 +620,34 @@ def dbg_accountinfo():
         rslt = db.accountinfo_get_item()
         for row in rslt:
             print(row)
+    elif op == TEST_OP.GET:
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        db.accountinfo_del_item('shawnelee882@gmail.com')
+        rslt = db.accountinfo_get_item()
+        for row in rslt:
+            print(row)
     db.close()
     del db
 
 def dbg_shipaddr():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.shipaddress_get_item()
     for row in rslt:
         print(row)
 
-    if first_time == 1:
+    if op == TEST_OP.ADD:
         #db.shipaddress_add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
         #db.shipaddress_add_item('AdamBright@foxairmail.com', 'Bing Tan', '3308 Trappers Cove Trail, Apt 3B', '48910', 'Lansing', 'MI', '6508890052')
         #db.shipaddress_add_item('DamaoWang@foxairmail.com', 'Zhiyuan Lan', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
         db.shipaddress_add_item('shawnelee88@gmail.com', 'Zhiyuan Lan', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
         db.shipaddress_add_item('shawnelee881@gmail.com', 'shawnelee881', '4 bud way, ste 16-201', '03063', 'nashua ','NH', '6035241562')
         db.shipaddress_add_item('shawnelee882@gmail.com', 'shawnelee882', '4 bud way, ste 16-201', '03063', 'nashua ', 'NH', '6035241562')
-    elif first_time == 0:
+    elif op == TEST_OP.UPDATE:
         rslt = db.shipaddress_get_item()
         for row in rslt:
             print(row)
@@ -590,18 +656,28 @@ def dbg_shipaddr():
         rslt = db.shipaddress_get_item()
         for row in rslt:
             print(row)
+    elif op == TEST_OP.GET:
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        db.shipaddress_del_item('shawnelee882@gmail.com')
+        rslt = db.shipaddress_get_item()
+        for row in rslt:
+            print(row)
+
     db.close()
     del db
 
 def dbg_finance():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.finance_get_item()
     for row in rslt:
         print(row)
 
-    if first_time == 1:
+    if op == TEST_OP.ADD:
         # db.finance_add_item('MarvinDickerson987@foxairmail.com', 'Marvin Dickerson','4859106480044568',
         #                     '04','2022','TDLan-549','Marvin Dickerson','6 redglobe ct','29681-3615',
         #                     'simpsonville','SC','8645612655')
@@ -620,29 +696,47 @@ def dbg_finance():
         rslt = db.finance_get_item()
         for row in rslt:
             print(row)
-    elif first_time == 0:
+    elif op == TEST_OP.UPDATE:
         db.finance_update_item('shawnelee882@gmail.com', 'Mineral Dick111', '4859107167920401',
                     '04', '2022', 'TDLan-549', 'Mineral Dick111', '193 central st. Apt W253', '03051',
                     'hangzhou', 'ZJ', '4242237285')
         rslt = db.finance_get_item()
         for row in rslt:
             print(row)
-
+    elif op == TEST_OP.GET:
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        db.finance_del_item('shawnelee882@gmail.com')
+        rslt = db.finance_get_item()
+        for row in rslt:
+            print(row)
     db.close()
     del db
 
 def dbg_accountquota():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.accountquota_get_item()
     for row in rslt:
         print(row)
-    if first_time == 1:
+
+    if op == TEST_OP.ADD:
         db.accountquota_add_item('TDLan-549',200,800,10000)
         db.accountquota_add_item('BOALI-848', 200, 800, 10000)
-    elif first_time == 0:
+    elif op == TEST_OP.UPDATE:
         db.accountquota_update_item('TDLan-549',200,900,10000)
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.GET:
+        rslt = db.accountquota_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        db.accountquota_del_item('TDLan-548')
         rslt = db.accountquota_get_item()
         for row in rslt:
             print(row)
@@ -651,20 +745,29 @@ def dbg_accountquota():
 
 
 def dbg_productinfo():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.productinfo_get_item()
     for row in rslt:
         print(row)
-    if first_time == 1:
+    if op == TEST_OP.ADD:
         db.productinfo_add_item('B077RYNF82','Electronics','89.99','89.99', 'wireless bluetooth earbud', 'STERIO')
         db.productinfo_add_item('B07439HNFT', 'Electronics', '94.99', '94.99', 'dash cam 4k', 'STERIO')
-    elif first_time == 0:
+    elif op == TEST_OP.UPDATE:
         rslt = db.productinfo_get_item()
         for row in rslt:
             print(row)
         db.productinfo_update_item('B07439HNFT', 'Computer', '77.68', '88.67', 'HD cam', 'xiaomi')
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.GET:
+        rslt = db.productinfo_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        db.productinfo_del_item('B07439HNad')
+        rslt = db.productinfo_get_item()
         for row in rslt:
             print(row)
     db.close()
@@ -672,13 +775,13 @@ def dbg_productinfo():
 
 
 def dbg_ordertask():
-    first_time = 2
+    op = TEST_OP.GET
     db = amazon_db()
     db.open()
     rslt = db.ordertask_get_item()
     for row in rslt:
         print(row)
-    if first_time == 1:
+    if op == TEST_OP.ADD:
         db.ordertask_add_item('lee','B077RYNF82',10)
         db.ordertask_add_item('lee', 'B07439HNFT', 20)
         db.ordertask_add_item('AnnieLee@foxairmail.com', 'B07439HNFT', 30)
@@ -687,7 +790,14 @@ def dbg_ordertask():
         rslt = db.ordertask_get_item()
         for row in rslt:
             print(row)
-
+    elif op == TEST_OP.UPDATE:
+        pass
+    elif op == TEST_OP.GET:
+        rslt = db.ordertask_get_item()
+        for row in rslt:
+            print(row)
+    elif op == TEST_OP.DEL:
+        pass
     db.close()
     del db
 
@@ -776,12 +886,12 @@ def get_available_user(min_val, buyer_interval, asin_task):
 
 
 dbg_accountinfo()
-#dbg_shipaddr()
-#dbg_finance()
-#dbg_accountquota()
-#dbg_productinfo()
-#dbg_ordertask()
-#get_available_user(150, 24, {'B077RYNF82':2, 'B07439HNFT':1})
+# dbg_shipaddr()
+# dbg_finance()
+# dbg_accountquota()
+# dbg_productinfo()
+# dbg_ordertask()
+# get_available_user(150, 24, {'B077RYNF82':2, 'B07439HNFT':1})
 
 if __name__=='__main__':
     pass
