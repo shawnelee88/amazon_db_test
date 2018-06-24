@@ -67,26 +67,15 @@ class amazon_db(object):
     sql_get_accountinfo_by_lastbuy_dict = ("SELECT * FROM accountinfo WHERE lastbuy < %(lastbuy)s AND in_use=0;")
 
     # args in tuple form
-    sql_add_shipaddr_tuple = ("INSERT INTO shipaddress "
+    sql_add_shipaddress_tuple = ("INSERT INTO shipaddress "
                               "(username, fullname, address, postalcode, city, state, phonenumber)"
                               "VALUES (%s,%s,%s,%s,%s,%s,%s)")
-    sql_update_shipaddress_fullname_tuple = ("UPDATE shipaddress SET fullname=%s WHERE username=%s;")
-    sql_update_shipaddress_address_tuple = ("UPDATE shipaddress SET address=%s WHERE username=%s;")
-    sql_update_shipaddress_postalcode_tuple = ("UPDATE shipaddress SET postalcode=%s WHERE username=%s;")
-    sql_update_shipaddress_city_tuple = ("UPDATE shipaddress SET city=%s WHERE username=%s;")
-    sql_update_shipaddress_state_tuple = ("UPDATE shipaddress SET state=%s WHERE username=%s;")
-    sql_update_shipaddress_phonenumber_tuple = ("UPDATE shipaddress SET phonenumber=%s WHERE username=%s;")
-
+    sql_update_shipaddress_tuple = ("UPDATE shipaddress SET fullname=%s, address=%s, postalcode=%s, city=%s, state=%s, phonenumber=%s WHERE username=%s;")
     # args in dict form
-    sql_add_shipaddr_dict = ("INSERT INTO shipaddress "
+    sql_add_shipaddress_dict = ("INSERT INTO shipaddress "
                              "(username, fullname, address, postalcode, city, state, phonenumber)"
                              "VALUES (%(username)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
-    sql_update_shipaddress_fullname_dict = ("UPDATE shipaddress SET fullname=%(fullname)s WHERE username=%(username)s;")
-    sql_update_shipaddress_address_dict = ("UPDATE shipaddress SET address=%(address)s WHERE username=%(username)s;")
-    sql_update_shipaddress_postalcode_dict = ("UPDATE shipaddress SET postalcode=%(postalcode)s WHERE username=%(username)s;")
-    sql_update_shipaddress_city_dict = ("UPDATE shipaddress SET city=%(city)s WHERE username=%(username)s;")
-    sql_update_shipaddress_state_dict = ("UPDATE shipaddress SET state=%(state)s WHERE username=%(username)s;")
-    sql_update_shipaddress_phonenumber_dict = ("UPDATE shipaddress SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
+    sql_update_shipaddress_dict = ("UPDATE shipaddress SET fullname=%(fullname)s, address=%(address)s, postalcode=%(postalcode)s, city=%(city)s, state=%(state)s, phonenumber=%(phonenumber)s WHERE username=%(username)s;")
     sql_get_shipaddress_all = ("SELECT * FROM shipaddress;")
     sql_get_shipaddress_by_username_tuple = ("SELECT * FROM shipaddress WHERE username=%s;")
     sql_get_shipaddress_by_username_dict = ("SELECT * FROM shipaddress WHERE username=%(username)s;")
@@ -95,33 +84,13 @@ class amazon_db(object):
     sql_add_finance_tuple = ("INSERT INTO finance "
                              "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
                              "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
-    sql_update_finance_nameoncard_tuple = ("UPDATE finance SET nameoncard=%s WHERE username=%s;")
-    sql_update_finance_ccnumber_tuple = ("UPDATE finance SET ccnumber=%s WHERE username=%s;")
-    sql_update_finance_ccmonth_tuple = ("UPDATE finance SET ccmonth=%s WHERE username=%s;")
-    sql_update_finance_fullname_tuple = ("UPDATE finance SET fullname=%s WHERE username=%s;")
-    sql_update_finance_address_tuple = ("UPDATE finance SET address=%s WHERE username=%s;")
-    sql_update_finance_ccyear_tuple = ("UPDATE finance SET ccyear=%s WHERE username=%s;")
-    sql_update_finance_postalcode_tuple = ("UPDATE finance SET postalcode=%s WHERE username=%s;")
-    sql_update_finance_city_tuple = ("UPDATE finance SET city=%s WHERE username=%s;")
-    sql_update_finance_state_tuple = ("UPDATE finance SET state=%s WHERE username=%s;")
-    sql_update_finance_phonenumber_tuple = ("UPDATE finance SET phonenumber=%s WHERE username=%s;")
-    sql_update_finance_checkaccount_tuple = ("UPDATE finance SET checkaccount=%s WHERE username=%s;")
+    sql_update_finance_tuple = ("UPDATE finance SET nameoncard=%s,ccnumber=%s,ccmonth=%s,ccyear=%s,checkaccount=%s,fullname=%s,address=%s, postalcode=%s,city=%s,state=%s,phonenumber=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_finance_dict = ("INSERT INTO finance "
                             "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
                             "VALUES (%(username)s,%(nameoncard)s,%(ccnumber)s,%(ccmonth)s,%(ccyear)s,%(checkaccount)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
-    sql_update_finance_nameoncard_dict = ("UPDATE finance SET nameoncard=%(nameoncard)s WHERE username=%(username)s;")
-    sql_update_finance_ccnumber_dict = ("UPDATE finance SET ccnumber=%(ccnumber)s WHERE username=%(username)s;")
-    sql_update_finance_ccmonth_dict = ("UPDATE finance SET ccmonth=%(ccmonth)s WHERE username=%(username)s;")
-    sql_update_finance_fullname_dict = ("UPDATE finance SET fullname=%(fullname)s WHERE username=%(username)s;")
-    sql_update_finance_address_dict = ("UPDATE finance SET address=%(address)s WHERE username=%(username)s;")
-    sql_update_finance_ccyear_dict = ("UPDATE finance SET ccyear=%(ccyear)s WHERE username=%(username)s;")
-    sql_update_finance_postalcode_dict = ("UPDATE finance SET postalcode=%(postalcode)s WHERE username=%(username)s;")
-    sql_update_finance_city_dict = ("UPDATE finance SET city=%(city)s WHERE username=%(username)s;")
-    sql_update_finance_state_dict = ("UPDATE finance SET state=%(state)s WHERE username=%(username)s;")
-    sql_update_finance_phonenumber_dict = ("UPDATE finance SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
-    sql_update_finance_checkaccount_dict = ("UPDATE finance SET checkaccount=%(checkaccount)s WHERE username=%(username)s;")
+    sql_update_finance_dict = ("UPDATE finance SET nameoncard=%(nameoncard)s,ccnumber=%(ccnumber)s,ccmonth=%(ccmonth)s,ccyear=%(ccyear)s,checkaccount=%(checkaccount)s,fullname=%(fullname)s,address=%(address)s, postalcode=%(postalcode)s,city=%(city)s,state=%(state)s,phonenumber=%(phonenumber)s WHERE username=%(username)s;")
 
     sql_get_finance_all = ("SELECT * FROM finance;")
     sql_get_finance_by_username_tuple = ("SELECT * FROM finance WHERE username=%s;")
@@ -131,17 +100,13 @@ class amazon_db(object):
     sql_add_quota_tuple = ("INSERT INTO accountquota"
                            "(checkaccount,wquota,mquota,yquota)"
                            "VALUES (%s,%s,%s,%s)")
-    sql_update_accountquota_wquota_tuple = ("UPDATE accountquota SET wquota=%s WHERE checkaccount=%s;")
-    sql_update_accountquota_mquota_tuple = ("UPDATE accountquota SET mquota=%s WHERE checkaccount=%s;")
-    sql_update_accountquota_yquota_tuple = ("UPDATE accountquota SET yquota=%s WHERE checkaccount=%s;")
+    sql_update_quota_tuple = ("UPDATE accountquota SET wquota=%s,mquota=%s,yquota=%s WHERE checkaccount=%s;")
 
     # args in dict form
     sql_add_quota_dict = ("INSERT INTO accountquota"
                           "(checkaccount,wquota,mquota,yquota)"
                           "VALUES (%(checkaccount)s,%(wquota)s,%(mquota)s,%(yquota)s)")
-    sql_update_accountquota_wquota_dict = ("UPDATE accountquota SET wquota=%(wquota)s WHERE checkaccount=%(checkaccount)s;")
-    sql_update_accountquota_mquota_dict = ("UPDATE accountquota SET mquota=%(mquota)s WHERE checkaccount=%(checkaccount)s;")
-    sql_update_accountquota_yquota_dict = ("UPDATE accountquota SET yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
+    sql_update_quota_dict = ("UPDATE accountquota SET wquota=%(wquota)s,mquota=%(mquota)s,yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
     sql_get_accountquota_all = ("SELECT * FROM accountquota;")
     sql_get_accountquota_by_account_tuple = ("SELECT * FROM accountquota WHERE checkaccount=%s;")
     sql_get_accountquota_by_account_dict = ("SELECT * FROM accountquota WHERE checkaccount=%(checkaccount)s;")
@@ -164,17 +129,13 @@ class amazon_db(object):
     sql_add_ordertask_tuple = ("INSERT INTO ordertask"
                                "(username, asin, num, order_date)"
                                "VALUES (%s,%s,%s,%s)")
-    sql_update_ordertask_asin_tuple = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
-    sql_update_ordertask_num_tuple = ("UPDATE ordertask SET num=%s WHERE username=%s;")
-    sql_update_ordertask_order_date_tuple = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+    sql_update_ordertask_tuple = ("UPDATE ordertask SET asin=%s, num=%s, order_date=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_ordertask_dict = ("INSERT INTO ordertask"
                               "(username, asin, num, order_date)"
                               "VALUES (%(username)s,%(asin)s,%(num)s, %(order_date)s)")
-    sql_update_ordertask_asin_dict = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
-    sql_update_ordertask_num_dict = ("UPDATE ordertask SET num=%s WHERE username=%s;")
-    sql_update_ordertask_order_date_dict = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+    sql_update_ordertask_dict = ("UPDATE ordertask SET asin=%(asin)s, num=%(num)s, order_date=%(order_date)s WHERE username=%(username)s;")
     sql_get_ordertask_all = ("SELECT * FROM ordertask;")
 
     def __init__(self):
@@ -303,7 +264,7 @@ class amazon_db(object):
         print(add_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_add_shipaddr_dict, add_dll)
+        self.cursor.execute(amazon_db.sql_add_shipaddress_dict, add_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -336,85 +297,22 @@ class amazon_db(object):
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
         return candidate_shipaddr
-
-    def shipaddress_update_fullname(self, username, fullname):
+    def shipaddress_update_item(self, username, fullname, address, postalcode, city, state, phonenumber):
         update_dll = {}
         update_dll['username'] = username
-        if fullname:
-            update_dll['fullname'] = fullname
-        # print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_fullname_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def shipaddress_update_address(self, username, address):
-        update_dll = {}
-        update_dll['username'] = username
-        if address:
-            update_dll['address'] = address
+        update_dll['fullname'] = fullname
+        update_dll['address'] = address
+        update_dll['postalcode'] = postalcode
+        update_dll['city'] = city
+        update_dll['state'] = state
+        update_dll['phonenumber'] = phonenumber
         #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_address_dict, update_dll)
+        self.cursor.execute(amazon_db.sql_update_shipaddress_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
-
-    def shipaddress_update_postalcode(self, username, postalcode):
-        update_dll = {}
-        update_dll['username'] = username
-        if postalcode:
-            update_dll['postalcode'] = postalcode
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_postalcode_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def shipaddress_update_city(self, username, city):
-        update_dll = {}
-        update_dll['username'] = username
-        if city:
-            update_dll['city'] = city
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_city_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def shipaddress_update_state(self, username, state):
-        update_dll = {}
-        update_dll['username'] = username
-        if state:
-            update_dll['state'] = state
-        #print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_state_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def shipaddress_update_phonenumber(self, username, phonenumber):
-        update_dll = {}
-        update_dll['username'] = username
-        if phonenumber:
-            update_dll['phonenumber'] = phonenumber
-        # print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.SHIPADDRESS])
-        self.cursor.execute(amazon_db.sql_update_shipaddress_phonenumber_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
 
     def finance_add_item(self, username, nameoncard, ccnumber, ccmonth, ccyear,
                  checkaccount, fullname, address, postalcode,city,state,phonenumber):
@@ -467,142 +365,26 @@ class amazon_db(object):
         self.cursor.close()
         return candidate_finance
 
-        candidate_finance = self.cursor.fetchone()
 
-    def finance_update_nameoncard(self, username, nameoncard):
+    def finance_update_item(self, username, nameoncard, ccnumber, ccmonth, ccyear,
+                 checkaccount, fullname, address, postalcode,city,state,phonenumber):
         update_dll = {}
         update_dll['username'] = username
-        if nameoncard:
-            update_dll['nameoncard'] = nameoncard
-        # print(update_dll)
+        update_dll['nameoncard'] = nameoncard
+        update_dll['ccnumber'] = ccnumber
+        update_dll['ccmonth'] = ccmonth
+        update_dll['ccyear'] = ccyear
+        update_dll['checkaccount'] = checkaccount
+        update_dll['fullname'] = fullname
+        update_dll['address'] = address
+        update_dll['postalcode'] = postalcode
+        update_dll['city'] = city
+        update_dll['state'] = state
+        update_dll['phonenumber'] = phonenumber
+        #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_nameoncard_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def finance_update_ccnumber(self, username, ccnumber):
-        update_dll = {}
-        update_dll['username'] = username
-        if ccnumber:
-            update_dll['ccnumber'] = ccnumber
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_ccnumber_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def finance_update_ccmonth(self, username, ccmonth):
-        update_dll = {}
-        update_dll['username'] = username
-        if ccmonth:
-            update_dll['ccmonth'] = ccmonth
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_ccmonth_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def finance_update_ccyear(self, username, ccyear):
-        update_dll = {}
-        update_dll['username'] = username
-        if ccyear:
-            update_dll['ccyear'] = ccyear
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_ccyear_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def finance_update_checkaccount(self, username, checkaccount):
-        update_dll = {}
-        update_dll['username'] = username
-        if checkaccount:
-            update_dll['checkaccount'] = checkaccount
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_checkaccount_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def finance_update_fullname(self, username, fullname):
-        update_dll = {}
-        update_dll['username'] = username
-        if fullname:
-            update_dll['fullname'] = fullname
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_fullname_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def finance_update_address(self, username, address):
-        update_dll = {}
-        update_dll['username'] = username
-        if address:
-            update_dll['address'] = address
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_address_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def finance_update_postalcode(self, username, postalcode):
-        update_dll = {}
-        update_dll['username'] = username
-        if postalcode:
-            update_dll['postalcode'] = postalcode
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_postalcode_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def finance_update_city(self, username, city):
-        update_dll = {}
-        update_dll['username'] = username
-        if city:
-            update_dll['city'] = city
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_city_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def finance_update_state(self, username, state):
-        update_dll = {}
-        update_dll['username'] = username
-        if state:
-            update_dll['state'] = state
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_state_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-    def finance_update_phonenumber(self, username, phonenumber):
-        update_dll = {}
-        update_dll['username'] = username
-        if phonenumber:
-            update_dll['phonenumber'] = phonenumber
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.FINANCE])
-        self.cursor.execute(amazon_db.sql_update_finance_phonenumber_dict, update_dll)
+        self.cursor.execute(amazon_db.sql_update_finance_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -649,46 +431,20 @@ class amazon_db(object):
         result = self.cursor.fetchone()
         if result:
             quota_rslt = dict(zip(amazon_db.accountquota_fields, result))
-        #print(quota_rslt)
+        #print(result)
         self.cursor.execute(self.sql_unlock_all)
         self.cursor.close()
-        return quota_rslt
-
-    def accountquota_update_wquota(self, checkaccount, wquota):
+        return result
+    def accountquota_update_item(self, checkaccount,wquota,mquota,yquota):
         update_dll = {}
         update_dll['checkaccount'] = checkaccount
-        if wquota:
-            update_dll['wquota'] = wquota
-        # print(update_dll)
+        update_dll['wquota'] = wquota
+        update_dll['mquota'] = mquota
+        update_dll['yquota'] = yquota
+        #print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
-        self.cursor.execute(amazon_db.sql_update_accountquota_wquota_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def accountquota_update_mquota(self, checkaccount, mquota):
-        update_dll = {}
-        update_dll['checkaccount'] = checkaccount
-        if mquota:
-            update_dll['mquota'] = mquota
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
-        self.cursor.execute(amazon_db.sql_update_accountquota_mquota_dict, update_dll)
-        self.cursor.execute(self.sql_unlock_all)
-        self.cnx.commit()
-        self.cursor.close()
-
-    def accountquota_update_yquota(self, checkaccount, yquota):
-        update_dll = {}
-        update_dll['checkaccount'] = checkaccount
-        if yquota:
-            update_dll['yquota'] = yquota
-        print(update_dll)
-        self.cursor = self.cnx.cursor()
-        self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTQUOTA])
-        self.cursor.execute(amazon_db.sql_update_accountquota_yquota_dict, update_dll)
+        self.cursor.execute(amazon_db.sql_update_quota_dict, update_dll)
         self.cursor.execute(self.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -813,7 +569,7 @@ def dbg_accountinfo():
     del db
 
 def dbg_shipaddr():
-    first_time = 1
+    first_time = 0
     db = amazon_db()
     db.open()
     rslt = db.shipaddress_get_item()
@@ -832,36 +588,15 @@ def dbg_shipaddr():
         for row in rslt:
             print(row)
 
-        db.shipaddress_update_address('MarvinDickerson987@foxairmail.com', 'jiangnanguojicheng')
+        db.shipaddress_update_item('shawnelee882@gmail.com', 'shawnelee882222', '4 bud way, ste 16-202', '310000', 'hangzhou ', 'ZJ', '6035241562')
         rslt = db.shipaddress_get_item()
         for row in rslt:
             print(row)
-        db.shipaddress_update_city('MarvinDickerson987@foxairmail.com', 'YW')
-        rslt = db.shipaddress_get_item()
-        for row in rslt:
-            print(row)
-        db.shipaddress_update_fullname('MarvinDickerson987@foxairmail.com', 'leanardo')
-        rslt = db.shipaddress_get_item()
-        for row in rslt:
-            print(row)
-        db.shipaddress_update_phonenumber('MarvinDickerson987@foxairmail.com', '987987')
-        rslt = db.shipaddress_get_item()
-        for row in rslt:
-            print(row)
-        db.shipaddress_update_postalcode('MarvinDickerson987@foxairmail.com', '009990')
-        rslt = db.shipaddress_get_item()
-        for row in rslt:
-            print(row)
-        db.shipaddress_update_state('MarvinDickerson987@foxairmail.com', 'JH')
-        rslt = db.shipaddress_get_item()
-        for row in rslt:
-            print(row)
-
     db.close()
     del db
 
 def dbg_finance():
-    first_time = 1
+    first_time = 0
     db = amazon_db()
     db.open()
     rslt = db.finance_get_item()
@@ -888,47 +623,9 @@ def dbg_finance():
         for row in rslt:
             print(row)
     else:
-        db.finance_update_state('SteveCarsey@foxairmail.com', 'JH')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_postalcode('SteveCarsey@foxairmail.com', '089098')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_fullname('SteveCarsey@foxairmail.com', 'leanardo')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_phonenumber('SteveCarsey@foxairmail.com', '987688778686')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_city('SteveCarsey@foxairmail.com', 'YW')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_address('SteveCarsey@foxairmail.com', 'JNGJC')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_ccmonth('SteveCarsey@foxairmail.com', '06')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_ccnumber('SteveCarsey@foxairmail.com', '09090909')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_ccyear('SteveCarsey@foxairmail.com', '2020')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_checkaccount('SteveCarsey@foxairmail.com', 'lee99shawne')
-        rslt = db.finance_get_item()
-        for row in rslt:
-            print(row)
-        db.finance_update_nameoncard('SteveCarsey@foxairmail.com', 'XIAOMIN')
+        db.finance_update_item('shawnelee882@gmail.com', 'Mineral Dick111', '4859107167920401',
+                    '04', '2022', 'TDLan-549', 'Mineral Dick111', '193 central st. Apt W253', '03051',
+                    'hangzhou', 'ZJ', '4242237285')
         rslt = db.finance_get_item()
         for row in rslt:
             print(row)
@@ -937,7 +634,7 @@ def dbg_finance():
     del db
 
 def dbg_accountquota():
-    first_time = 1
+    first_time = 0
     db = amazon_db()
     db.open()
     rslt = db.accountquota_get_item()
@@ -947,18 +644,7 @@ def dbg_accountquota():
         db.accountquota_add_item('TDLan-549',200,800,10000)
         db.accountquota_add_item('BOALI-848', 200, 800, 10000)
     else:
-        rslt = db.accountquota_get_item()
-        for row in rslt:
-            print(row)
-        db.accountquota_update_mquota('TDLan-549',400)
-        rslt = db.accountquota_get_item()
-        for row in rslt:
-            print(row)
-        db.accountquota_update_wquota('TDLan-549',500)
-        rslt = db.accountquota_get_item()
-        for row in rslt:
-            print(row)
-        db.accountquota_update_yquota('TDLan-549',20000)
+        db.accountquota_update_item('TDLan-549',200,900,10000)
         rslt = db.accountquota_get_item()
         for row in rslt:
             print(row)
@@ -1098,12 +784,12 @@ def get_available_user(min_val, buyer_interval, **asin_task):
 
 
 
-dbg_accountinfo()
+#dbg_accountinfo()
 #dbg_shipaddr()
 #dbg_finance()
 #dbg_accountquota()
 #dbg_productinfo()
-#dbg_ordertask()
+dbg_ordertask()
 #get_available_user(150, 24, **{'B077RYNF82':2, 'B07439HNFT':1})
 
 if __name__=='__main__':
