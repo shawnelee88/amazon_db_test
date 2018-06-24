@@ -20,52 +20,83 @@ local_config = {
 }
 
 mac_config = {
-  'user': 'root',
-  'password': 'lee',
-  'host': '192.168.0.3',
-  'port':'3306',
-  'database': 'amazon'
+    'user': 'root',
+    'password': 'lee',
+    'host': '192.168.0.3',
+    'port': '3306',
+    'database': 'amazon'
 }
 config = remote_config
+
+
 class accountinfo_db(object):
     sql_lock_read = ("LOCK TABLE accountinfo READ;")
     sql_lock_write = ("LOCK TABLE accountinfo WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
-    #args in tuple form
+    # args in tuple form
     sql_add_info_tuple = ("INSERT INTO accountinfo"
-                    "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);")
-    sql_update_pw_tuple = ("UPDATE accountinfo SET password=%s WHERE username=%s;")
-    sql_update_cookie_tuple = ("UPDATE accountinfo SET cookies=%s WHERE username=%s;")
-    sql_update_createdate_tuple = ("UPDATE accountinfo SET createdate=%s WHERE username=%s;")
-    sql_update_logindate_tuple = ("UPDATE accountinfo SET logindate=%s WHERE username=%s;")
-    sql_update_lastbuy_tuple = ("UPDATE accountinfo SET lastbuy=%s WHERE username=%s;")
-    sql_update_in_use_tuple = ("UPDATE accountinfo SET in_use=%s WHERE username=%s;")
-    sql_update_alive_tuple = ("UPDATE accountinfo SET alive=%s WHERE username=%s;")
+                          "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC)"
+                          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);")
+    sql_update_pw_tuple = (
+        "UPDATE accountinfo SET password=%s WHERE username=%s;")
+    sql_update_cookie_tuple = (
+        "UPDATE accountinfo SET cookies=%s WHERE username=%s;")
+    sql_update_createdate_tuple = (
+        "UPDATE accountinfo SET createdate=%s WHERE username=%s;")
+    sql_update_logindate_tuple = (
+        "UPDATE accountinfo SET logindate=%s WHERE username=%s;")
+    sql_update_lastbuy_tuple = (
+        "UPDATE accountinfo SET lastbuy=%s WHERE username=%s;")
+    sql_update_in_use_tuple = (
+        "UPDATE accountinfo SET in_use=%s WHERE username=%s;")
+    sql_update_alive_tuple = (
+        "UPDATE accountinfo SET alive=%s WHERE username=%s;")
     sql_update_MAC_tuple = ("UPDATE accountinfo SET MAC=%s WHERE username=%s;")
 
-    #args in dict form
+    # args in dict form
     sql_add_info_dict = ("INSERT INTO accountinfo"
-                          "(username, password, cookies, createdate, logindate, lastbuy, alive, MAC)"
-                          "VALUES (%(username)s, %(passwd)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(alive)s, %(MAC)s);")
-    sql_update_pw_dict = ("UPDATE accountinfo SET password=%(passwd)s WHERE username=%(username)s;")
-    sql_update_cookies_dict = ("UPDATE accountinfo SET cookies=%(cookies)s WHERE username=%(username)s;")
-    sql_update_createdate_dict = ("UPDATE accountinfo SET createdate=%(createdate)s WHERE username=%(username)s;")
-    sql_update_logindate_dict = ("UPDATE accountinfo SET logindate=%(logindate)s WHERE username=%(username)s;")
-    sql_update_lastbuy_dict = ("UPDATE accountinfo SET lastbuy=%(lastbuy)s WHERE username=%(username)s;")
-    sql_update_in_use_dict = ("UPDATE accountinfo SET in_use=%(in_use)s WHERE username=%(username)s;")
-    sql_update_alive_dict = ("UPDATE accountinfo SET alive=%(alive)s WHERE username=%(username)s;")
-    sql_update_MAC_dict = ("UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
+                         "(username, password, cookies, createdate, logindate, lastbuy, alive, MAC)"
+                         "VALUES (%(username)s, %(passwd)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(alive)s, %(MAC)s);")
+    sql_update_pw_dict = (
+        "UPDATE accountinfo SET password=%(passwd)s WHERE username=%(username)s;")
+    sql_update_cookies_dict = (
+        "UPDATE accountinfo SET cookies=%(cookies)s WHERE username=%(username)s;")
+    sql_update_createdate_dict = (
+        "UPDATE accountinfo SET createdate=%(createdate)s WHERE username=%(username)s;")
+    sql_update_logindate_dict = (
+        "UPDATE accountinfo SET logindate=%(logindate)s WHERE username=%(username)s;")
+    sql_update_lastbuy_dict = (
+        "UPDATE accountinfo SET lastbuy=%(lastbuy)s WHERE username=%(username)s;")
+    sql_update_in_use_dict = (
+        "UPDATE accountinfo SET in_use=%(in_use)s WHERE username=%(username)s;")
+    sql_update_alive_dict = (
+        "UPDATE accountinfo SET alive=%(alive)s WHERE username=%(username)s;")
+    sql_update_MAC_dict = (
+        "UPDATE accountinfo SET MAC=%(MAC)s WHERE username=%(username)s;")
 
     sql_get_info = ("SELECT * FROM accountinfo;")
-    sql_get_info_by_lastbuy_tuple = ("SELECT * FROM accountinfo WHERE lastbuy < %s;")
-    sql_get_info_by_lastbuy_dict = ("SELECT * FROM accountinfo WHERE lastbuy < %(lastbuy)s;")
-    accountinfo_fields = ['userid', 'username', 'password', 'cookies', 'createdate', 'logindate', 'lastbuy', 'in_use', 'alive', 'MAC']
+    sql_get_info_by_lastbuy_tuple = (
+        "SELECT * FROM accountinfo WHERE lastbuy < %s;")
+    sql_get_info_by_lastbuy_dict = (
+        "SELECT * FROM accountinfo WHERE lastbuy < %(lastbuy)s;")
+    accountinfo_fields = [
+        'userid',
+        'username',
+        'password',
+        'cookies',
+        'createdate',
+        'logindate',
+        'lastbuy',
+        'in_use',
+        'alive',
+        'MAC']
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
         return
-    def add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(), lastbuy=datetime(1997,1,1), in_use=0, alive=1, cookies=None, MAC=None):
+
+    def add_item(self, username, passwd, createdate=datetime.now(), logindate=datetime.now(
+    ), lastbuy=datetime(1997, 1, 1), in_use=0, alive=1, cookies=None, MAC=None):
         add_dll = {}
         add_dll['username'] = username
         add_dll['passwd'] = passwd
@@ -85,14 +116,13 @@ class accountinfo_db(object):
         self.cursor.close()
         return
 
-
     def get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_read)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_get_info)
         result = self.cursor.fetchall()
-        #print(result)
+        # print(result)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -104,32 +134,35 @@ class accountinfo_db(object):
         self.cursor = self.cnx.cursor()
 
         tdiff = timedelta(hours=interval)
-        self.cursor.execute(accountinfo_db.sql_get_info_by_lastbuy_tuple, (datetime.now() + tdiff,))
+        self.cursor.execute(
+            accountinfo_db.sql_get_info_by_lastbuy_tuple, (datetime.now() + tdiff,))
         result = self.cursor.fetchall()
         # print(result)
         candidate_users = []
         for row in result:
-            #print(row)
+            # print(row)
             item = dict(zip(accountinfo_db.accountinfo_fields, row))
-            #print(item)
+            # print(item)
             candidate_users.append(item)
-        #print(candidate_users)
+        # print(candidate_users)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
         return candidate_users
+
     def update_passwd(self, username, passwd):
         update_dll = {}
         update_dll['username'] = username
         if passwd:
             update_dll['passwd'] = passwd
-        #print(update_dll)
+        # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_write)
         self.cursor.execute(accountinfo_db.sql_update_pw_dict, update_dll)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_createdate(self, username, createdate):
         update_dll = {}
         update_dll['username'] = username
@@ -138,10 +171,13 @@ class accountinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_write)
-        self.cursor.execute(accountinfo_db.sql_update_createdate_dict, update_dll)
+        self.cursor.execute(
+            accountinfo_db.sql_update_createdate_dict,
+            update_dll)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_logindate(self, username, logindate):
         update_dll = {}
         update_dll['username'] = username
@@ -150,10 +186,13 @@ class accountinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountinfo_db.sql_lock_write)
-        self.cursor.execute(accountinfo_db.sql_update_logindate_dict, update_dll)
+        self.cursor.execute(
+            accountinfo_db.sql_update_logindate_dict,
+            update_dll)
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_lastbuy(self, username, lastbuy):
         update_dll = {}
         update_dll['username'] = username
@@ -166,6 +205,7 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_in_use(self, username, in_use):
         update_dll = {}
         update_dll['username'] = username
@@ -178,6 +218,7 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_alive(self, username, alive):
         update_dll = {}
         update_dll['username'] = username
@@ -190,6 +231,7 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_cookies(self, username, cookies):
         update_dll = {}
         update_dll['username'] = username
@@ -202,6 +244,7 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_MAC(self, username, MAC):
         update_dll = {}
         update_dll['username'] = username
@@ -214,6 +257,7 @@ class accountinfo_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def close(self):
         self.cnx.close()
 
@@ -224,35 +268,58 @@ class shipaddress_db(object):
     sql_unlock_all = ("UNLOCK TABLES;")
     # args in tuple form
     sql_add_shipaddr_tuple = ("INSERT INTO shipaddress "
-                    "(username, fullname, address, postalcode, city, state, phonenumber)"
-                    "VALUES (%s,%s,%s,%s,%s,%s,%s)")
-    sql_update_shipaddress_fullname_tuple = ("UPDATE shipaddress SET fullname=%s WHERE username=%s;")
-    sql_update_shipaddress_address_tuple = ("UPDATE shipaddress SET address=%s WHERE username=%s;")
-    sql_update_shipaddress_postalcode_tuple = ("UPDATE shipaddress SET postalcode=%s WHERE username=%s;")
-    sql_update_shipaddress_city_tuple = ("UPDATE shipaddress SET city=%s WHERE username=%s;")
-    sql_update_shipaddress_state_tuple = ("UPDATE shipaddress SET state=%s WHERE username=%s;")
-    sql_update_shipaddress_phonenumber_tuple = ("UPDATE shipaddress SET phonenumber=%s WHERE username=%s;")
+                              "(username, fullname, address, postalcode, city, state, phonenumber)"
+                              "VALUES (%s,%s,%s,%s,%s,%s,%s)")
+    sql_update_shipaddress_fullname_tuple = (
+        "UPDATE shipaddress SET fullname=%s WHERE username=%s;")
+    sql_update_shipaddress_address_tuple = (
+        "UPDATE shipaddress SET address=%s WHERE username=%s;")
+    sql_update_shipaddress_postalcode_tuple = (
+        "UPDATE shipaddress SET postalcode=%s WHERE username=%s;")
+    sql_update_shipaddress_city_tuple = (
+        "UPDATE shipaddress SET city=%s WHERE username=%s;")
+    sql_update_shipaddress_state_tuple = (
+        "UPDATE shipaddress SET state=%s WHERE username=%s;")
+    sql_update_shipaddress_phonenumber_tuple = (
+        "UPDATE shipaddress SET phonenumber=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_shipaddr_dict = ("INSERT INTO shipaddress "
-                              "(username, fullname, address, postalcode, city, state, phonenumber)"
-                              "VALUES (%(username)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
-    sql_update_shipaddress_fullname_dict = ("UPDATE shipaddress SET fullname=%(fullname)s WHERE username=%(username)s;")
-    sql_update_shipaddress_address_dict = ("UPDATE shipaddress SET address=%(address)s WHERE username=%(username)s;")
-    sql_update_shipaddress_postalcode_dict = ("UPDATE shipaddress SET postalcode=%(postalcode)s WHERE username=%(username)s;")
-    sql_update_shipaddress_city_dict = ("UPDATE shipaddress SET city=%(city)s WHERE username=%(username)s;")
-    sql_update_shipaddress_state_dict = ("UPDATE shipaddress SET state=%(state)s WHERE username=%(username)s;")
-    sql_update_shipaddress_phonenumber_dict = ("UPDATE shipaddress SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
+                             "(username, fullname, address, postalcode, city, state, phonenumber)"
+                             "VALUES (%(username)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
+    sql_update_shipaddress_fullname_dict = (
+        "UPDATE shipaddress SET fullname=%(fullname)s WHERE username=%(username)s;")
+    sql_update_shipaddress_address_dict = (
+        "UPDATE shipaddress SET address=%(address)s WHERE username=%(username)s;")
+    sql_update_shipaddress_postalcode_dict = (
+        "UPDATE shipaddress SET postalcode=%(postalcode)s WHERE username=%(username)s;")
+    sql_update_shipaddress_city_dict = (
+        "UPDATE shipaddress SET city=%(city)s WHERE username=%(username)s;")
+    sql_update_shipaddress_state_dict = (
+        "UPDATE shipaddress SET state=%(state)s WHERE username=%(username)s;")
+    sql_update_shipaddress_phonenumber_dict = (
+        "UPDATE shipaddress SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
     sql_get_info = ("SELECT * FROM shipaddress;")
-    sql_get_info_by_username_tuple = ("SELECT * FROM shipaddress WHERE username=%s;")
-    sql_get_info_by_username_dict = ("SELECT * FROM shipaddress WHERE username=%(username)s;")
-    shipaddress_fields = ['addrid', 'username', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber']
+    sql_get_info_by_username_tuple = (
+        "SELECT * FROM shipaddress WHERE username=%s;")
+    sql_get_info_by_username_dict = (
+        "SELECT * FROM shipaddress WHERE username=%(username)s;")
+    shipaddress_fields = [
+        'addrid',
+        'username',
+        'fullname',
+        'address',
+        'postalcode',
+        'city',
+        'state',
+        'phonenumber']
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
         return
 
-    def add_item(self, username, fullname, address=None, postalcode=None, city=None, state=None, phonenumber=None):
+    def add_item(self, username, fullname, address=None,
+                 postalcode=None, city=None, state=None, phonenumber=None):
         add_dll = {}
         add_dll['username'] = username
         add_dll['fullname'] = fullname
@@ -289,7 +356,8 @@ class shipaddress_db(object):
         query = {}
         query['username'] = username
 
-        self.cursor.execute(shipaddress_db.sql_get_info_by_username_dict, query)
+        self.cursor.execute(
+            shipaddress_db.sql_get_info_by_username_dict, query)
         result = self.cursor.fetchall()
         print(result)
         candidate_shipaddr = []
@@ -311,7 +379,9 @@ class shipaddress_db(object):
         # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_fullname_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_fullname_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -324,7 +394,9 @@ class shipaddress_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_address_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_address_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -337,7 +409,9 @@ class shipaddress_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_postalcode_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_postalcode_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -350,7 +424,9 @@ class shipaddress_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_city_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_city_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -363,7 +439,9 @@ class shipaddress_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_state_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_state_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -376,10 +454,13 @@ class shipaddress_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(shipaddress_db.sql_lock_write)
-        self.cursor.execute(shipaddress_db.sql_update_shipaddress_phonenumber_dict, update_dll)
+        self.cursor.execute(
+            shipaddress_db.sql_update_shipaddress_phonenumber_dict,
+            update_dll)
         self.cursor.execute(shipaddress_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def close(self):
         self.cnx.close()
 
@@ -390,47 +471,71 @@ class finance_db(object):
     sql_unlock_all = ("UNLOCK TABLES;")
     # args in tuple form
     sql_add_finance_tuple = ("INSERT INTO finance "
-                   "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
-                   "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
-    sql_update_finance_nameoncard_tuple = ("UPDATE finance SET nameoncard=%s WHERE username=%s;")
-    sql_update_finance_ccnumber_tuple = ("UPDATE finance SET ccnumber=%s WHERE username=%s;")
-    sql_update_finance_ccmonth_tuple = ("UPDATE finance SET ccmonth=%s WHERE username=%s;")
-    sql_update_finance_fullname_tuple = ("UPDATE finance SET fullname=%s WHERE username=%s;")
-    sql_update_finance_address_tuple = ("UPDATE finance SET address=%s WHERE username=%s;")
-    sql_update_finance_ccyear_tuple = ("UPDATE finance SET ccyear=%s WHERE username=%s;")
-    sql_update_finance_postalcode_tuple = ("UPDATE finance SET postalcode=%s WHERE username=%s;")
-    sql_update_finance_city_tuple = ("UPDATE finance SET city=%s WHERE username=%s;")
-    sql_update_finance_state_tuple = ("UPDATE finance SET state=%s WHERE username=%s;")
-    sql_update_finance_phonenumber_tuple = ("UPDATE finance SET phonenumber=%s WHERE username=%s;")
-    sql_update_finance_checkaccount_tuple = ("UPDATE finance SET checkaccount=%s WHERE username=%s;")
+                             "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
+                             "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+    sql_update_finance_nameoncard_tuple = (
+        "UPDATE finance SET nameoncard=%s WHERE username=%s;")
+    sql_update_finance_ccnumber_tuple = (
+        "UPDATE finance SET ccnumber=%s WHERE username=%s;")
+    sql_update_finance_ccmonth_tuple = (
+        "UPDATE finance SET ccmonth=%s WHERE username=%s;")
+    sql_update_finance_fullname_tuple = (
+        "UPDATE finance SET fullname=%s WHERE username=%s;")
+    sql_update_finance_address_tuple = (
+        "UPDATE finance SET address=%s WHERE username=%s;")
+    sql_update_finance_ccyear_tuple = (
+        "UPDATE finance SET ccyear=%s WHERE username=%s;")
+    sql_update_finance_postalcode_tuple = (
+        "UPDATE finance SET postalcode=%s WHERE username=%s;")
+    sql_update_finance_city_tuple = (
+        "UPDATE finance SET city=%s WHERE username=%s;")
+    sql_update_finance_state_tuple = (
+        "UPDATE finance SET state=%s WHERE username=%s;")
+    sql_update_finance_phonenumber_tuple = (
+        "UPDATE finance SET phonenumber=%s WHERE username=%s;")
+    sql_update_finance_checkaccount_tuple = (
+        "UPDATE finance SET checkaccount=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_finance_dict = ("INSERT INTO finance "
-                             "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
-                             "VALUES (%(username)s,%(nameoncard)s,%(ccnumber)s,%(ccmonth)s,%(ccyear)s,%(checkaccount)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
-    sql_update_finance_nameoncard_dict = ("UPDATE finance SET nameoncard=%(nameoncard)s WHERE username=%(username)s;")
-    sql_update_finance_ccnumber_dict = ("UPDATE finance SET ccnumber=%(ccnumber)s WHERE username=%(username)s;")
-    sql_update_finance_ccmonth_dict= ("UPDATE finance SET ccmonth=%(ccmonth)s WHERE username=%(username)s;")
-    sql_update_finance_fullname_dict = ("UPDATE finance SET fullname=%(fullname)s WHERE username=%(username)s;")
-    sql_update_finance_address_dict = ("UPDATE finance SET address=%(address)s WHERE username=%(username)s;")
-    sql_update_finance_ccyear_dict = ("UPDATE finance SET ccyear=%(ccyear)s WHERE username=%(username)s;")
-    sql_update_finance_postalcode_dict = ("UPDATE finance SET postalcode=%(postalcode)s WHERE username=%(username)s;")
-    sql_update_finance_city_dict = ("UPDATE finance SET city=%(city)s WHERE username=%(username)s;")
-    sql_update_finance_state_dict = ("UPDATE finance SET state=%(state)s WHERE username=%(username)s;")
-    sql_update_finance_phonenumber_dict = ("UPDATE finance SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
-    sql_update_finance_checkaccount_dict = ("UPDATE finance SET checkaccount=%(checkaccount)s WHERE username=%(username)s;")
+                            "(username,nameoncard,ccnumber,ccmonth,ccyear,checkaccount,fullname,address, postalcode,city,state,phonenumber) "
+                            "VALUES (%(username)s,%(nameoncard)s,%(ccnumber)s,%(ccmonth)s,%(ccyear)s,%(checkaccount)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)")
+    sql_update_finance_nameoncard_dict = (
+        "UPDATE finance SET nameoncard=%(nameoncard)s WHERE username=%(username)s;")
+    sql_update_finance_ccnumber_dict = (
+        "UPDATE finance SET ccnumber=%(ccnumber)s WHERE username=%(username)s;")
+    sql_update_finance_ccmonth_dict = (
+        "UPDATE finance SET ccmonth=%(ccmonth)s WHERE username=%(username)s;")
+    sql_update_finance_fullname_dict = (
+        "UPDATE finance SET fullname=%(fullname)s WHERE username=%(username)s;")
+    sql_update_finance_address_dict = (
+        "UPDATE finance SET address=%(address)s WHERE username=%(username)s;")
+    sql_update_finance_ccyear_dict = (
+        "UPDATE finance SET ccyear=%(ccyear)s WHERE username=%(username)s;")
+    sql_update_finance_postalcode_dict = (
+        "UPDATE finance SET postalcode=%(postalcode)s WHERE username=%(username)s;")
+    sql_update_finance_city_dict = (
+        "UPDATE finance SET city=%(city)s WHERE username=%(username)s;")
+    sql_update_finance_state_dict = (
+        "UPDATE finance SET state=%(state)s WHERE username=%(username)s;")
+    sql_update_finance_phonenumber_dict = (
+        "UPDATE finance SET phonenumber=%(phonenumber)s WHERE username=%(username)s;")
+    sql_update_finance_checkaccount_dict = (
+        "UPDATE finance SET checkaccount=%(checkaccount)s WHERE username=%(username)s;")
     finance_fields = ['cardid', 'username', 'nameoncard', 'ccnumber', 'ccmonth', 'ccyear',
                       'checkaccount', 'fullname', 'address', 'postalcode', 'city', 'state', 'phonenumber']
     sql_get_info = ("SELECT * FROM finance;")
-    sql_get_info_by_username_tuple = ("SELECT * FROM finance WHERE username=%s;")
-    sql_get_info_by_username_dict = ("SELECT * FROM finance WHERE username=%(username)s;")
+    sql_get_info_by_username_tuple = (
+        "SELECT * FROM finance WHERE username=%s;")
+    sql_get_info_by_username_dict = (
+        "SELECT * FROM finance WHERE username=%(username)s;")
 
     def __init__(self):
         self.cnx = mysql.connector.connect(**config)
         return
 
     def add_item(self, username, nameoncard, ccnumber, ccmonth, ccyear,
-                 checkaccount, fullname, address, postalcode,city,state,phonenumber):
+                 checkaccount, fullname, address, postalcode, city, state, phonenumber):
         add_dll = {}
         add_dll['username'] = username
         add_dll['nameoncard'] = nameoncard
@@ -469,7 +574,8 @@ class finance_db(object):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_read)
         self.cursor = self.cnx.cursor()
-        self.cursor.execute(finance_db.sql_get_info_by_username_tuple, (username,))
+        self.cursor.execute(
+            finance_db.sql_get_info_by_username_tuple, (username,))
         result = self.cursor.fetchall()
         # print(result)
         candidate_finance = []
@@ -482,6 +588,7 @@ class finance_db(object):
         self.cursor.execute(accountinfo_db.sql_unlock_all)
         self.cursor.close()
         return candidate_finance
+
     def update_nameoncard(self, username, nameoncard):
         update_dll = {}
         update_dll['username'] = username
@@ -490,7 +597,9 @@ class finance_db(object):
         # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_nameoncard_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_nameoncard_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -503,7 +612,9 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_ccnumber_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_ccnumber_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -516,7 +627,9 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_ccmonth_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_ccmonth_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -529,7 +642,9 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_ccyear_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_ccyear_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -542,7 +657,9 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_checkaccount_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_checkaccount_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -555,10 +672,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_fullname_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_fullname_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_address(self, username, address):
         update_dll = {}
         update_dll['username'] = username
@@ -567,10 +687,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_address_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_address_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_postalcode(self, username, postalcode):
         update_dll = {}
         update_dll['username'] = username
@@ -579,10 +702,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_postalcode_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_postalcode_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_city(self, username, city):
         update_dll = {}
         update_dll['username'] = username
@@ -591,10 +717,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_city_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_city_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_state(self, username, state):
         update_dll = {}
         update_dll['username'] = username
@@ -603,10 +732,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_state_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_state_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def update_phonenumber(self, username, phonenumber):
         update_dll = {}
         update_dll['username'] = username
@@ -615,10 +747,13 @@ class finance_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(finance_db.sql_lock_write)
-        self.cursor.execute(finance_db.sql_update_finance_phonenumber_dict, update_dll)
+        self.cursor.execute(
+            finance_db.sql_update_finance_phonenumber_dict,
+            update_dll)
         self.cursor.execute(finance_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
+
     def close(self):
         self.cnx.close()
 
@@ -629,24 +764,38 @@ class accountquota_db(object):
     sql_unlock_all = ("UNLOCK TABLES;")
     # args in tuple form
     sql_add_quota_tuple = ("INSERT INTO accountquota"
-                 "(checkaccount,wquota,mquota,yquota)"
-                 "VALUES (%s,%s,%s,%s)")
-    sql_update_accountquota_wquota_tuple = ("UPDATE accountquota SET wquota=%s WHERE checkaccount=%s;")
-    sql_update_accountquota_mquota_tuple = ("UPDATE accountquota SET mquota=%s WHERE checkaccount=%s;")
-    sql_update_accountquota_yquota_tuple = ("UPDATE accountquota SET yquota=%s WHERE checkaccount=%s;")
+                           "(checkaccount,wquota,mquota,yquota)"
+                           "VALUES (%s,%s,%s,%s)")
+    sql_update_accountquota_wquota_tuple = (
+        "UPDATE accountquota SET wquota=%s WHERE checkaccount=%s;")
+    sql_update_accountquota_mquota_tuple = (
+        "UPDATE accountquota SET mquota=%s WHERE checkaccount=%s;")
+    sql_update_accountquota_yquota_tuple = (
+        "UPDATE accountquota SET yquota=%s WHERE checkaccount=%s;")
 
     # args in dict form
     sql_add_quota_dict = ("INSERT INTO accountquota"
-                           "(checkaccount,wquota,mquota,yquota)"
-                           "VALUES (%(checkaccount)s,%(wquota)s,%(mquota)s,%(yquota)s)")
-    sql_update_accountquota_wquota_dict = ("UPDATE accountquota SET wquota=%(wquota)s WHERE checkaccount=%(checkaccount)s;")
-    sql_update_accountquota_mquota_dict = ("UPDATE accountquota SET mquota=%(mquota)s WHERE checkaccount=%(checkaccount)s;")
-    sql_update_accountquota_yquota_dict = ("UPDATE accountquota SET yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
+                          "(checkaccount,wquota,mquota,yquota)"
+                          "VALUES (%(checkaccount)s,%(wquota)s,%(mquota)s,%(yquota)s)")
+    sql_update_accountquota_wquota_dict = (
+        "UPDATE accountquota SET wquota=%(wquota)s WHERE checkaccount=%(checkaccount)s;")
+    sql_update_accountquota_mquota_dict = (
+        "UPDATE accountquota SET mquota=%(mquota)s WHERE checkaccount=%(checkaccount)s;")
+    sql_update_accountquota_yquota_dict = (
+        "UPDATE accountquota SET yquota=%(yquota)s WHERE checkaccount=%(checkaccount)s;")
     sql_get_info = ("SELECT * FROM accountquota;")
 
-    sql_get_one_info_tuple = ("SELECT * FROM accountquota WHERE checkaccount=%s;")
-    sql_get_one_info_dict = ("SELECT * FROM accountquota WHERE checkaccount=%(checkaccount)s;")
-    accountquota_fields = ['accountid', 'checkaccount', 'wquota', 'mquota', 'yquota']
+    sql_get_one_info_tuple = (
+        "SELECT * FROM accountquota WHERE checkaccount=%s;")
+    sql_get_one_info_dict = (
+        "SELECT * FROM accountquota WHERE checkaccount=%(checkaccount)s;")
+    accountquota_fields = [
+        'accountid',
+        'checkaccount',
+        'wquota',
+        'mquota',
+        'yquota']
+
     def __init__(self):
         try:
             self.cnx = mysql.connector.connect(**config)
@@ -654,7 +803,7 @@ class accountquota_db(object):
             print('haha1', err)
         return
 
-    def add_item(self, checkaccount,wquota,mquota,yquota):
+    def add_item(self, checkaccount, wquota, mquota, yquota):
         add_dll = {}
         add_dll['checkaccount'] = checkaccount
         add_dll['wquota'] = wquota
@@ -669,7 +818,7 @@ class accountquota_db(object):
         self.cursor.close()
         return
 
-    #get all accounts' quota
+    # get all accounts' quota
     def get_item(self):
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_read)
@@ -681,8 +830,8 @@ class accountquota_db(object):
         self.cursor.close()
         return result
 
-    #input specific user
-    #output all related info
+    # input specific user
+    # output all related info
     def get_one_item(self, checkaccount):
         query = {}
         query['checkaccount'] = checkaccount
@@ -694,9 +843,9 @@ class accountquota_db(object):
         quota_rslt = []
         for row in result:
             item = dict(zip(accountquota_db.accountquota_fields, row))
-            #print(item)
+            # print(item)
             quota_rslt.append(item)
-        #print(quota_rslt)
+        # print(quota_rslt)
         self.cursor.execute(accountquota_db.sql_unlock_all)
         self.cursor.close()
         return quota_rslt
@@ -709,7 +858,9 @@ class accountquota_db(object):
         # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_write)
-        self.cursor.execute(accountquota_db.sql_update_accountquota_wquota_dict, update_dll)
+        self.cursor.execute(
+            accountquota_db.sql_update_accountquota_wquota_dict,
+            update_dll)
         self.cursor.execute(accountquota_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -722,7 +873,9 @@ class accountquota_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_write)
-        self.cursor.execute(accountquota_db.sql_update_accountquota_mquota_dict, update_dll)
+        self.cursor.execute(
+            accountquota_db.sql_update_accountquota_mquota_dict,
+            update_dll)
         self.cursor.execute(accountquota_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -735,7 +888,9 @@ class accountquota_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(accountquota_db.sql_lock_write)
-        self.cursor.execute(accountquota_db.sql_update_accountquota_yquota_dict, update_dll)
+        self.cursor.execute(
+            accountquota_db.sql_update_accountquota_yquota_dict,
+            update_dll)
         self.cursor.execute(accountquota_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -743,33 +898,51 @@ class accountquota_db(object):
     def close(self):
         self.cnx.close()
 
+
 class productinfo_db(object):
     sql_lock_read = ("LOCK TABLE productinfo READ;")
     sql_lock_write = ("LOCK TABLE productinfo WRITE;")
     sql_unlock_all = ("UNLOCK TABLES;")
     # args in tuple form
     sql_add_productinfo_tuple = ("INSERT INTO productinfo"
-                           "(asin, department, busybox_price, order_price, keyword, brand)"
-                           "VALUES (%s,%s,%s,%s,%s,%s)")
-    sql_update_productinfo_department_tuple = ("UPDATE productinfo SET department=%s WHERE asin=%s;")
-    sql_update_productinfo_busybox_price_tuple = ("UPDATE productinfo SET busybox_price=%s WHERE asin=%s;")
-    sql_update_productinfo_order_price_tuple = ("UPDATE productinfo SET order_price=%s WHERE asin=%s;")
-    sql_update_productinfo_keyword_tuple = ("UPDATE productinfo SET keyword=%s WHERE asin=%s;")
-    sql_update_productinfo_brand_tuple = ("UPDATE productinfo SET brand=%s WHERE asin=%s;")
+                                 "(asin, department, busybox_price, order_price, keyword, brand)"
+                                 "VALUES (%s,%s,%s,%s,%s,%s)")
+    sql_update_productinfo_department_tuple = (
+        "UPDATE productinfo SET department=%s WHERE asin=%s;")
+    sql_update_productinfo_busybox_price_tuple = (
+        "UPDATE productinfo SET busybox_price=%s WHERE asin=%s;")
+    sql_update_productinfo_order_price_tuple = (
+        "UPDATE productinfo SET order_price=%s WHERE asin=%s;")
+    sql_update_productinfo_keyword_tuple = (
+        "UPDATE productinfo SET keyword=%s WHERE asin=%s;")
+    sql_update_productinfo_brand_tuple = (
+        "UPDATE productinfo SET brand=%s WHERE asin=%s;")
 
     # args in dict form
     sql_add_productinfo_dict = ("INSERT INTO productinfo"
-                           "(asin, department, busybox_price, order_price, keyword, brand)"
-                           "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s)")
-    sql_update_productinfo_department_dict = ("UPDATE productinfo SET department=%(department)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_busybox_price_dict = ("UPDATE productinfo SET busybox_price=%(busybox_price)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_order_price_dict = ("UPDATE productinfo SET order_price=%(order_price)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_keyword_dict = ("UPDATE productinfo SET keyword=%(keyword)s WHERE asin=%(asin)s;")
-    sql_update_productinfo_brand_dict = ("UPDATE productinfo SET brand=%(brand)s WHERE asin=%(asin)s;")
+                                "(asin, department, busybox_price, order_price, keyword, brand)"
+                                "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s)")
+    sql_update_productinfo_department_dict = (
+        "UPDATE productinfo SET department=%(department)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_busybox_price_dict = (
+        "UPDATE productinfo SET busybox_price=%(busybox_price)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_order_price_dict = (
+        "UPDATE productinfo SET order_price=%(order_price)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_keyword_dict = (
+        "UPDATE productinfo SET keyword=%(keyword)s WHERE asin=%(asin)s;")
+    sql_update_productinfo_brand_dict = (
+        "UPDATE productinfo SET brand=%(brand)s WHERE asin=%(asin)s;")
     sql_get_info = ("SELECT * FROM productinfo;")
     sql_get_one_info_tuple = ("SELECT * FROM productinfo WHERE asin=%s;")
     sql_get_one_info_dict = ("SELECT * FROM productinfo WHERE asin=%(asin)s;")
-    productinfo_fields = ['productid', 'asin', 'department', 'busybox_price', 'order_price', 'keyword', 'brand']
+    productinfo_fields = [
+        'productid',
+        'asin',
+        'department',
+        'busybox_price',
+        'order_price',
+        'keyword',
+        'brand']
 
     def __init__(self):
         try:
@@ -778,7 +951,8 @@ class productinfo_db(object):
             print('haha2', err)
         return
 
-    def add_item(self, asin, department, busybox_price, order_price, keyword, brand):
+    def add_item(self, asin, department, busybox_price,
+                 order_price, keyword, brand):
         add_dll = {}
         add_dll['asin'] = asin
         add_dll['department'] = department
@@ -820,10 +994,11 @@ class productinfo_db(object):
         assert self.cursor.rowcount == 1
 
         product_rslt = dict(zip(productinfo_db.productinfo_fields, result[0]))
-        #print(product_rslt)
+        # print(product_rslt)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cursor.close()
         return product_rslt
+
     def update_department(self, asin, department):
         update_dll = {}
         update_dll['asin'] = asin
@@ -832,7 +1007,9 @@ class productinfo_db(object):
         # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(productinfo_db.sql_lock_write)
-        self.cursor.execute(productinfo_db.sql_update_productinfo_department_dict, update_dll)
+        self.cursor.execute(
+            productinfo_db.sql_update_productinfo_department_dict,
+            update_dll)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -845,7 +1022,9 @@ class productinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(productinfo_db.sql_lock_write)
-        self.cursor.execute(productinfo_db.sql_update_productinfo_busybox_price_dict, update_dll)
+        self.cursor.execute(
+            productinfo_db.sql_update_productinfo_busybox_price_dict,
+            update_dll)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -858,7 +1037,9 @@ class productinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(productinfo_db.sql_lock_write)
-        self.cursor.execute(productinfo_db.sql_update_productinfo_order_price_dict, update_dll)
+        self.cursor.execute(
+            productinfo_db.sql_update_productinfo_order_price_dict,
+            update_dll)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -871,7 +1052,9 @@ class productinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(productinfo_db.sql_lock_write)
-        self.cursor.execute(productinfo_db.sql_update_productinfo_keyword_dict, update_dll)
+        self.cursor.execute(
+            productinfo_db.sql_update_productinfo_keyword_dict,
+            update_dll)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -884,7 +1067,9 @@ class productinfo_db(object):
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(productinfo_db.sql_lock_write)
-        self.cursor.execute(productinfo_db.sql_update_productinfo_brand_dict, update_dll)
+        self.cursor.execute(
+            productinfo_db.sql_update_productinfo_brand_dict,
+            update_dll)
         self.cursor.execute(productinfo_db.sql_unlock_all)
         self.cnx.commit()
         self.cursor.close()
@@ -899,21 +1084,33 @@ class ordertask_db(object):
     sql_unlock_all = ("UNLOCK TABLES;")
     # args in tuple form
     sql_add_ordertask_tuple = ("INSERT INTO ordertask"
-                 "(username, asin, num, order_date)"
-                 "VALUES (%s,%s,%s,%s)")
-    sql_update_ordertask_asin_tuple = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
-    sql_update_ordertask_num_tuple = ("UPDATE ordertask SET num=%s WHERE username=%s;")
-    sql_update_ordertask_order_date_tuple = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+                               "(username, asin, num, order_date)"
+                               "VALUES (%s,%s,%s,%s)")
+    sql_update_ordertask_asin_tuple = (
+        "UPDATE ordertask SET asin=%s WHERE username=%s;")
+    sql_update_ordertask_num_tuple = (
+        "UPDATE ordertask SET num=%s WHERE username=%s;")
+    sql_update_ordertask_order_date_tuple = (
+        "UPDATE ordertask SET order_date=%s WHERE username=%s;")
 
     # args in dict form
     sql_add_ordertask_dict = ("INSERT INTO ordertask"
-                           "(username, asin, num, order_date)"
-                           "VALUES (%(username)s,%(asin)s,%(num)s, %(order_date)s)")
-    sql_update_ordertask_asin_dict = ("UPDATE ordertask SET asin=%s WHERE username=%s;")
-    sql_update_ordertask_num_dict = ("UPDATE ordertask SET num=%s WHERE username=%s;")
-    sql_update_ordertask_order_date_dict = ("UPDATE ordertask SET order_date=%s WHERE username=%s;")
+                              "(username, asin, num, order_date)"
+                              "VALUES (%(username)s,%(asin)s,%(num)s, %(order_date)s)")
+    sql_update_ordertask_asin_dict = (
+        "UPDATE ordertask SET asin=%s WHERE username=%s;")
+    sql_update_ordertask_num_dict = (
+        "UPDATE ordertask SET num=%s WHERE username=%s;")
+    sql_update_ordertask_order_date_dict = (
+        "UPDATE ordertask SET order_date=%s WHERE username=%s;")
     sql_get_info = ("SELECT * FROM ordertask;")
-    order_task_fields = ['ordertaskid', 'username', 'asin', 'num', 'order_date']
+    order_task_fields = [
+        'ordertaskid',
+        'username',
+        'asin',
+        'num',
+        'order_date']
+
     def __init__(self):
         try:
             self.cnx = mysql.connector.connect(**config)
@@ -921,7 +1118,7 @@ class ordertask_db(object):
             print('haha3', err)
         return
 
-    def add_item(self, username,asin,num,order_date=datetime.now()):
+    def add_item(self, username, asin, num, order_date=datetime.now()):
         add_dll = {}
         add_dll['username'] = username
         add_dll['asin'] = asin
@@ -950,9 +1147,6 @@ class ordertask_db(object):
 
     def close(self):
         self.cnx.close()
-
-
-
 
 
 def dbg_accountinfo():
@@ -1018,13 +1212,22 @@ def dbg_shipaddr():
     for row in rslt:
         print(row)
     if first_time == 1:
-        db.add_item('MarvinDickerson987@foxairmail.com', 'Jack Chan',  '1776 Bicentennial way, apt i-5','02911','North Providence','RI','6232295326')
+        db.add_item(
+            'MarvinDickerson987@foxairmail.com',
+            'Jack Chan',
+            '1776 Bicentennial way, apt i-5',
+            '02911',
+            'North Providence',
+            'RI',
+            '6232295326')
     else:
         rslt = db.get_item()
         for row in rslt:
             print(row)
 
-        db.update_address('MarvinDickerson987@foxairmail.com', 'hetianshangcheng')
+        db.update_address(
+            'MarvinDickerson987@foxairmail.com',
+            'hetianshangcheng')
         rslt = db.get_item()
         for row in rslt:
             print(row)
@@ -1052,6 +1255,7 @@ def dbg_shipaddr():
     db.close()
     del db
 
+
 def dbg_finance():
     first_time = 1
     db = finance_db()
@@ -1060,9 +1264,9 @@ def dbg_finance():
         print(row)
 
     if first_time == 1:
-        db.add_item('SteveCarsey@foxairmail.com','George Troni','4859103482757156',
-                 '04','2022','TDLan-549','George Troni','6 redglobe ct','29681-3615',
-                 'simpsonville','SC','8645612655')
+        db.add_item('SteveCarsey@foxairmail.com', 'George Troni', '4859103482757156',
+                    '04', '2022', 'TDLan-549', 'George Troni', '6 redglobe ct', '29681-3615',
+                    'simpsonville', 'SC', '8645612655')
         db.add_item('AnnieLee@foxairmail.com', 'Annie Lee', '4859109471703325',
                     '04', '2022', 'TDLan-549', 'Annie Lee', '193 central st. ste W102', '03051',
                     'nashua', 'NH', '3054146488')
@@ -1124,6 +1328,7 @@ def dbg_finance():
     db.close()
     del db
 
+
 def dbg_accountquota():
     first_time = 1
     db = accountquota_db()
@@ -1131,21 +1336,21 @@ def dbg_accountquota():
     for row in rslt:
         print(row)
     if first_time == 1:
-        db.add_item('TDLan-549',200,800,10000)
+        db.add_item('TDLan-549', 200, 800, 10000)
         db.add_item('BOALI-848', 200, 800, 10000)
     else:
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_mquota('TDLan-549',300)
+        db.update_mquota('TDLan-549', 300)
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_wquota('TDLan-549',900)
+        db.update_wquota('TDLan-549', 900)
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_yquota('TDLan-549',10010)
+        db.update_yquota('TDLan-549', 10010)
         rslt = db.get_item()
         for row in rslt:
             print(row)
@@ -1160,18 +1365,30 @@ def dbg_productinfo():
     for row in rslt:
         print(row)
     if first_time == 1:
-        db.add_item('B077RYNF82','Electronics','89.99','89.99', 'wireless bluetooth earbud', 'STERIO')
-        db.add_item('B07439HNFT', 'Electronics', '94.99', '94.99', 'dash cam 4k', 'STERIO')
+        db.add_item(
+            'B077RYNF82',
+            'Electronics',
+            '89.99',
+            '89.99',
+            'wireless bluetooth earbud',
+            'STERIO')
+        db.add_item(
+            'B07439HNFT',
+            'Electronics',
+            '94.99',
+            '94.99',
+            'dash cam 4k',
+            'STERIO')
     else:
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_department('B077RYNF82','telecom')
+        db.update_department('B077RYNF82', 'telecom')
         db.update_department('B07439HNFT', 'unicorn')
         rslt = db.get_item()
         for row in rslt:
             print(row)
-        db.update_busybox_price('B077RYNF82','100.00')
+        db.update_busybox_price('B077RYNF82', '100.00')
         db.update_busybox_price('B07439HNFT', '120.00')
         rslt = db.get_item()
         for row in rslt:
@@ -1200,7 +1417,7 @@ def dbg_ordertask():
     rslt = db.get_item()
     for row in rslt:
         print(row)
-    db.add_item('lee','B077RYNF82',10)
+    db.add_item('lee', 'B077RYNF82', 10)
     db.add_item('lee', 'B07439HNFT', 20)
     db.add_item('AnnieLee@foxairmail.com', 'B07439HNFT', 30)
     db.add_item('BingTan89@foxairmail.com', 'B07439HNFT', 40)
@@ -1208,11 +1425,14 @@ def dbg_ordertask():
     db.close()
     del db
 
-#select candidates which meets some requirements
-#min_val:each buyer should spend minimum money
-#buyer_interval:lastbuy time should be more than this, in hrs
+# select candidates which meets some requirements
+# min_val:each buyer should spend minimum money
+# buyer_interval:lastbuy time should be more than this, in hrs
+
+
 def get_available_user(min_val, buyer_interval, **asin_task):
-    #get available users according to buyer_interval, should not use users which have purchased recently
+    # get available users according to buyer_interval, should not use users
+    # which have purchased recently
     db1_accountinfo = accountinfo_db()
     db2_finance = finance_db()
     db3_accountquota = accountquota_db()
@@ -1224,17 +1444,18 @@ def get_available_user(min_val, buyer_interval, **asin_task):
         print(row['username'])
 
     # get users' shipaddress
-    shipaddr_result = db5_shipaddr.get_item_by_username('MarvinDickerson987@foxairmail.com')
+    shipaddr_result = db5_shipaddr.get_item_by_username(
+        'MarvinDickerson987@foxairmail.com')
     print('\n**********get shipaddreess**********')
     print(shipaddr_result)
 
-
-    #get bank-account those users are using, check if quota enough
+    # get bank-account those users are using, check if quota enough
     print('\n**********get finance according to user candidate**********')
-    finance_rslt = db2_finance.get_item_by_username('SteveCarsey@foxairmail.com')
-    #print(finance_rslt)
+    finance_rslt = db2_finance.get_item_by_username(
+        'SteveCarsey@foxairmail.com')
+    # print(finance_rslt)
     for row in finance_rslt:
-        #print(row['checkaccount'])
+        # print(row['checkaccount'])
         quota_rslt = db3_accountquota.get_one_item(row['checkaccount'])
         print(quota_rslt)
 
@@ -1253,17 +1474,17 @@ def get_available_user(min_val, buyer_interval, **asin_task):
     pass
 
 
-#dbg_accountinfo()
-#dbg_shipaddr()
-#dbg_finance()
-#dbg_accountquota()
-#dbg_productinfo()
-#dbg_ordertask()
-get_available_user(100, 24, **{'B077RYNF82':10, 'B07439HNFT':20})
+# dbg_accountinfo()
+# dbg_shipaddr()
+# dbg_finance()
+# dbg_accountquota()
+# dbg_productinfo()
+# dbg_ordertask()
+get_available_user(100, 24, **{'B077RYNF82': 10, 'B07439HNFT': 20})
 
-if __name__=='__main__':
+if __name__ == '__main__':
     pass
-    #test_accountinfo()
-    #test_shipaddr()
-    #test_finance()
-    #test_accountquota()
+    # test_accountinfo()
+    # test_shipaddr()
+    # test_finance()
+    # test_accountquota()
