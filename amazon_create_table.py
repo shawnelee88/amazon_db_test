@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 import mysql.connector
 from mysql.connector import errorcode
 import logging
 
 local_config = {
-  'user': 'root',
-  'password': 'lee'
+    'user': 'root',
+    'password': 'lee'
 }
 
 remote_config = {
-  'user': 'root',
-  'password': 'Max123',
-  'host': 'czds68.yicp.io',
-  'port':'4406',
-  'database': 'amazon'
+    'user': 'root',
+    'password': 'Max123',
+    'host': 'czds68.yicp.io',
+    'port': '4406',
+    'database': 'amazon'
 }
 
 mac_config = {
-  'user': 'root',
-  'password': 'lee',
-  'host': '192.168.0.3',
-  'port':'3306',
-  'database': 'amazon'
+    'user': 'root',
+    'password': 'lee',
+    'host': '192.168.0.3',
+    'port': '3306',
+    'database': 'amazon'
 }
 
 config = remote_config
@@ -35,8 +35,8 @@ TABLES['accountinfo'] = (
     "CREATE TABLE `accountinfo` ("
     " `userid` INT UNSIGNED AUTO_INCREMENT, "
     " `username` VARCHAR(80),"
-    " `password` VARCHAR(30)," 
-    " `cookies` VARCHAR(50)," 
+    " `password` VARCHAR(30),"
+    " `cookies` VARCHAR(50),"
     " `createdate` DATETIME,"
     " `logindate` DATETIME,"
     " `lastbuy` DATETIME,"
@@ -49,7 +49,7 @@ TABLES['accountinfo'] = (
 
 TABLES['shipaddress'] = (
     "CREATE TABLE `shipaddress` ("
-    "`addrid` INT UNSIGNED AUTO_INCREMENT," 
+    "`addrid` INT UNSIGNED AUTO_INCREMENT,"
     "`username` VARCHAR(80),"
     "`fullname` VARCHAR(40), "
     "`address` VARCHAR(100),"
@@ -64,7 +64,7 @@ TABLES['finance'] = (
     "CREATE TABLE `finance` ("
     "`cardid` INT UNSIGNED AUTO_INCREMENT,"
     "`username` VARCHAR(80), "
-    "`nameoncard` VARCHAR(40)," 
+    "`nameoncard` VARCHAR(40),"
     "`ccnumber` CHAR(16),"
     "`ccmonth` CHAR(2),"
     "`ccyear` CHAR(4),"
@@ -81,7 +81,7 @@ TABLES['finance'] = (
 
 TABLES['accountquota'] = (
     "CREATE TABLE `accountquota` ("
-    "`accountid` INT UNSIGNED AUTO_INCREMENT," 
+    "`accountid` INT UNSIGNED AUTO_INCREMENT,"
     "`checkaccount` VARCHAR(50), "
     "`wquota` INT UNSIGNED,"
     "`mquota` INT UNSIGNED,"
@@ -111,12 +111,15 @@ TABLES['ordertask'] = (
     "PRIMARY KEY (`ordertaskid`)"
     ") ENGINE=InnoDB")
 
+
 def create_database(cursor):
     try:
-        cursor.execute("CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
+        cursor.execute(
+            "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
     except mysql.connector.Error as err:
         print("Failed creating database: {}".format(err))
         exit(1)
+
 
 try:
     cnx = mysql.connector.connect(**config)
@@ -125,7 +128,7 @@ except mysql.connector.Error as err:
 cursor = cnx.cursor()
 
 try:
-    cnx.database = DB_NAME  
+    cnx.database = DB_NAME
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_BAD_DB_ERROR:
         create_database(cursor)
