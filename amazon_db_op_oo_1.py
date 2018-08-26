@@ -61,6 +61,7 @@ class amazon_db(object):
         "in_use",
         "alive",
         "MAC",
+        "proxy",
     ]
     shipaddress_fields = [
         "addrid",
@@ -102,18 +103,18 @@ class amazon_db(object):
     # args in tuple form
     sql_add_accountinfo_tuple = (
         "INSERT INTO accountinfo"
-        "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC)"
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+        "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC, proxy)"
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
     )
-    sql_update_accountinfo_tuple = "UPDATE accountinfo SET password=%s, cookies=%s, createdate=%s, logindate=%s, lastbuy=%s, in_use=%s, alive=%s, MAC=%s WHERE username=%s;"
+    sql_update_accountinfo_tuple = "UPDATE accountinfo SET password=%s, cookies=%s, createdate=%s, logindate=%s, lastbuy=%s, in_use=%s, alive=%s, MAC=%s, proxy=%s WHERE username=%s;"
 
     # args in dict form
     sql_add_accountinfo_dict = (
         "INSERT INTO accountinfo"
-        "(username, password, cookies, createdate, logindate, lastbuy, alive, MAC)"
-        "VALUES (%(username)s, %(password)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(alive)s, %(MAC)s);"
+        "(username, password, cookies, createdate, logindate, lastbuy, in_use, alive, MAC, proxy)"
+        "VALUES (%(username)s, %(password)s, %(cookies)s, %(createdate)s, %(logindate)s, %(lastbuy)s, %(in_use)s, %(alive)s, %(MAC)s, %(proxy)s);"
     )
-    sql_update_accountinfo_dict = "UPDATE accountinfo SET password=%(password)s, cookies=%(cookies)s, createdate=%(createdate)s, logindate=%(logindate)s, lastbuy=%(lastbuy)s, in_use=%(in_use)s, alive=%(alive)s, MAC=%(MAC)s WHERE username=%(username)s;"
+    sql_update_accountinfo_dict = "UPDATE accountinfo SET password=%(password)s, cookies=%(cookies)s, createdate=%(createdate)s, logindate=%(logindate)s, lastbuy=%(lastbuy)s, in_use=%(in_use)s, alive=%(alive)s, MAC=%(MAC)s, proxy=%(proxy)s WHERE username=%(username)s;"
 
     sql_get_accountinfo_all = "SELECT * FROM accountinfo;"
     sql_get_accountinfo_by_lastbuy_tuple = (
@@ -135,7 +136,7 @@ class amazon_db(object):
     sql_add_shipaddress_dict = (
         "INSERT INTO shipaddress "
         "(username, fullname, address, postalcode, city, state, phonenumber)"
-        "VALUES (%(username)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s)"
+        "VALUES (%(username)s,%(fullname)s,%(address)s,%(postalcode)s,%(city)s,%(state)s,%(phonenumber)s);"
     )
     sql_update_shipaddress_dict = "UPDATE shipaddress SET fullname=%(fullname)s, address=%(address)s, postalcode=%(postalcode)s, city=%(city)s, state=%(state)s, phonenumber=%(phonenumber)s WHERE username=%(username)s;"
     sql_get_shipaddress_all = "SELECT * FROM shipaddress;"
@@ -310,6 +311,7 @@ class amazon_db(object):
         in_use=0,
         alive=1,
         MAC="00-00-00-00-00-00",
+        proxy=None,
     ):
         add_dll = {}
         add_dll["username"] = username
@@ -321,6 +323,7 @@ class amazon_db(object):
         add_dll["in_use"] = in_use
         add_dll["alive"] = alive
         add_dll["MAC"] = MAC
+        add_dll["proxy"] = proxy
         print(add_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
@@ -371,6 +374,7 @@ class amazon_db(object):
         in_use,
         alive,
         MAC,
+        proxy,
     ):
         update_dll = {}
         update_dll["username"] = username
@@ -382,6 +386,7 @@ class amazon_db(object):
         update_dll["alive"] = alive
         update_dll["cookies"] = cookies
         update_dll["MAC"] = MAC
+        update_dll["proxy"] = proxy
         # print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.ACCOUNTINFO])
@@ -779,20 +784,20 @@ class TEST_OP(IntEnum):
 
 
 def dbg_accountinfo():
-    op = TEST_OP.GET
+    op = TEST_OP.ADD
     db = amazon_db()
     db.open()
-    rslt = db.accountinfo_get_item()
-    for row in rslt:
-        print(row)
+    # rslt = db.accountinfo_get_item()
+    # for row in rslt:
+    #     print(row)
 
     if op == TEST_OP.ADD:
         # db.accountinfo_add_item('MarvinDickerson987@foxairmail.com', 'MarvinDickerson987')
         # db.accountinfo_add_item('AdamBright@foxairmail.com', '6564kkngbb')
         # db.accountinfo_add_item('DamaoWang@foxairmail.com', 'jyenbk85')
         # db.accountinfo_add_item('shawnelee88@gmail.com', 'leo88')
-        db.accountinfo_add_item("shawnelee881@gmail.com", "leo88")
-        db.accountinfo_add_item("shawnelee882@gmail.com", "leo88")
+        db.accountinfo_add_item("shawnelee881@gmail.com", "leo88", proxy='10.10.2.31')
+        # db.accountinfo_add_item("shawnelee882@gmail.com", "leo88")
     elif op == TEST_OP.UPDATE:
         rslt = db.accountinfo_get_item()
         for row in rslt:
