@@ -43,6 +43,7 @@ TABLES['accountinfo'] = (
     " `in_use` INT UNSIGNED DEFAULT 0,"
     " `alive` INT UNSIGNED DEFAULT 1,"
     " `MAC` VARCHAR(20),"
+    " `proxy` VARCHAR(50),"
     " PRIMARY KEY (`userid`)"
     ") ENGINE=InnoDB")
 
@@ -98,6 +99,8 @@ TABLES['productinfo'] = (
     "`order_price` FLOAT,"
     "`keyword` VARCHAR(100),"
     "`brand` VARCHAR(50),"
+    "`size` VARCHAR(20),"
+    "`referenceasin` VARCHAR(800),"
     "PRIMARY KEY (`productid`)"
     ") ENGINE=InnoDB")
 

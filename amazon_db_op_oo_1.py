@@ -97,6 +97,8 @@ class amazon_db(object):
         "order_price",
         "keyword",
         "brand",
+        "size",
+        "referenceasin",
     ]
     order_task_fields = ["ordertaskid", "username", "asin", "num", "order_date"]
 
@@ -205,17 +207,17 @@ class amazon_db(object):
     # args in tuple form
     sql_add_productinfo_tuple = (
         "INSERT INTO productinfo"
-        "(asin, department, busybox_price, order_price, keyword, brand)"
-        "VALUES (%s,%s,%s,%s,%s,%s)"
+        "(asin, department, busybox_price, order_price, keyword, brand, size, referenceasin)"
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
     )
-    sql_update_productinfo_tuple = "UPDATE productinfo SET department=%s, busybox_price=%s, order_price=%s, keyword=%s, brand=%s WHERE asin=%s;"
+    sql_update_productinfo_tuple = "UPDATE productinfo SET department=%s, busybox_price=%s, order_price=%s, keyword=%s, brand=%s size=%s, referenceasin=%s WHERE asin=%s;"
     # args in dict form
     sql_add_productinfo_dict = (
         "INSERT INTO productinfo"
-        "(asin, department, busybox_price, order_price, keyword, brand)"
-        "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s)"
+        "(asin, department, busybox_price, order_price, keyword, brand, size, referenceasin)"
+        "VALUES (%(asin)s,%(department)s,%(busybox_price)s,%(order_price)s,%(keyword)s,%(brand)s, %(size)s, %(referenceasin)s)"
     )
-    sql_update_productinfo_dict = "UPDATE productinfo SET department=%(department)s, busybox_price=%(busybox_price)s, order_price=%(order_price)s, keyword=%(keyword)s, brand=%(brand)s WHERE asin=%(asin)s;"
+    sql_update_productinfo_dict = "UPDATE productinfo SET department=%(department)s, busybox_price=%(busybox_price)s, order_price=%(order_price)s, keyword=%(keyword)s, brand=%(brand)s, size=%(size)s, referenceasin=%(referenceasin)s WHERE asin=%(asin)s;"
     sql_get_productinfo_all = "SELECT * FROM productinfo;"
     sql_get_productinfo_by_asin_tuple = "SELECT * FROM productinfo WHERE asin=%s;"
     sql_get_productinfo_by_asin_dict = "SELECT * FROM productinfo WHERE asin=%(asin)s;"
@@ -674,7 +676,7 @@ class amazon_db(object):
         self.cursor.close()
 
     def productinfo_add_item(
-        self, asin, department, busybox_price, order_price, keyword, brand
+        self, asin, department, busybox_price, order_price, keyword, brand, size, referenceasin
     ):
         add_dll = {}
         add_dll["asin"] = asin
@@ -683,6 +685,8 @@ class amazon_db(object):
         add_dll["order_price"] = order_price
         add_dll["keyword"] = keyword
         add_dll["brand"] = brand
+        add_dll['size'] = size
+        add_dll['referenceasin'] = referenceasin
         # print(add_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
@@ -719,7 +723,7 @@ class amazon_db(object):
         return result
 
     def productinfo_update_item(
-        self, asin, department, busybox_price, order_price, keyword, brand
+        self, asin, department, busybox_price, order_price, keyword, brand, size, referenceasin
     ):
         update_dll = {}
         update_dll["asin"] = asin
@@ -728,6 +732,8 @@ class amazon_db(object):
         update_dll["order_price"] = order_price
         update_dll["keyword"] = keyword
         update_dll["brand"] = brand
+        update_dll['size'] = size
+        update_dll['referenceasin'] = referenceasin
         print(update_dll)
         self.cursor = self.cnx.cursor()
         self.cursor.execute(self.sql_wr_lock[DB.PRODUCTINFO])
@@ -784,7 +790,7 @@ class TEST_OP(IntEnum):
 
 
 def dbg_accountinfo():
-    op = TEST_OP.ADD
+    op = TEST_OP.DEL
     db = amazon_db()
     db.open()
     # rslt = db.accountinfo_get_item()
@@ -804,7 +810,7 @@ def dbg_accountinfo():
             print(row)
 
         db.accountinfo_update_item(
-            "shawnelee882@gmail.com",
+            "shawnelee881@gmail.com",
             "9999999",
             None,
             datetime.now(),
@@ -813,6 +819,7 @@ def dbg_accountinfo():
             1,
             1,
             None,
+            '11.11.11.11'
         )
         rslt = db.accountinfo_get_item()
         for row in rslt:
@@ -822,7 +829,7 @@ def dbg_accountinfo():
         for row in rslt:
             print(row)
     elif op == TEST_OP.DEL:
-        db.accountinfo_del_item("shawnelee882@gmail.com")
+        db.accountinfo_del_item("shawnelee881@gmail.com")
         rslt = db.accountinfo_get_item()
         for row in rslt:
             print(row)
@@ -1021,7 +1028,7 @@ def dbg_accountquota():
 
 
 def dbg_productinfo():
-    op = TEST_OP.GET
+    op = TEST_OP.DEL
     db = amazon_db()
     db.open()
     rslt = db.productinfo_get_item()
@@ -1029,22 +1036,22 @@ def dbg_productinfo():
         print(row)
     if op == TEST_OP.ADD:
         db.productinfo_add_item(
-            "B077RYNF82",
+            "XXYYXXYYXXYY",
             "Electronics",
             "89.99",
             "89.99",
             "wireless bluetooth earbud",
             "STERIO",
+            "Large",
+            "asin1,asin2,asin3"
         )
-        db.productinfo_add_item(
-            "B07439HNFT", "Electronics", "94.99", "94.99", "dash cam 4k", "STERIO"
-        )
+
     elif op == TEST_OP.UPDATE:
         rslt = db.productinfo_get_item()
         for row in rslt:
             print(row)
         db.productinfo_update_item(
-            "B07439HNFT", "Computer", "77.68", "88.67", "HD cam", "xiaomi"
+            "XXYYXXYYXXYY", "Computer", "77.68", "88.67", "HD cam", "xiaomi", "XL", "asin4,asin5"
         )
         for row in rslt:
             print(row)
@@ -1053,7 +1060,7 @@ def dbg_productinfo():
         for row in rslt:
             print(row)
     elif op == TEST_OP.DEL:
-        db.productinfo_del_item("B07439HNad")
+        db.productinfo_del_item("XXYYXXYYXXYY")
         rslt = db.productinfo_get_item()
         for row in rslt:
             print(row)
@@ -1168,11 +1175,11 @@ def get_available_user(min_val, buyer_interval, asin_task):
     del db
 
 
-dbg_accountinfo()
+# dbg_accountinfo()
 # dbg_shipaddr()
 # dbg_finance()
 # dbg_accountquota()
-# dbg_productinfo()
+dbg_productinfo()
 # dbg_ordertask()
 # get_available_user(150, 24, {'B077RYNF82':2, 'B07439HNFT':1})
 
